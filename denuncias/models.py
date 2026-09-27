@@ -158,4 +158,3 @@ class LogAdmin(models.Model):
     def __str__(self):
         return f'{self.get_acao_display()} em {self.data_hora:%d/%m/%Y %H:%M}'    
 
-    
