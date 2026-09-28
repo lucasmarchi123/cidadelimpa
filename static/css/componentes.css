@@ -88,3 +88,8 @@
 .rodape__barra { display: flex; flex-wrap: wrap; justify-content: space-between; gap: .75rem 1.5rem; padding-block: 1.5rem 2rem; }
 .rodape__links { display: flex; gap: 1.5rem; }
 .rodape a { color: #fff; }
+
+/* Selo com ícone, usado em páginas de confirmação */
+.selo { display: grid; place-items: center; width: 4rem; height: 4rem; border-radius: 14px;
+  background: var(--menta-forte); color: var(--icone-passo); }
+.selo .icone { width: 1.9rem; height: 1.9rem; }
