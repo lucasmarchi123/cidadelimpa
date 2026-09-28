@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block titulo %}Criar conta — CidadeLimpa{% endblock %}
+
+{% block conteudo %}
+  <main class="conteiner acesso acesso--longo">
+    <div class="acesso__arte" aria-hidden="true">
+      <div class="placa placa--compacta">
+        <span class="placa__bairro">Paraíso</span>
+        <span class="placa__rua">Rua São José</span>
+        <span class="placa__cep">CEP 59200-000</span>
+      </div>
+      <div class="denuncia__foto"><svg viewBox="0 0 320 200" preserveAspectRatio="xMidYMid slice"><use href="#rua"/></svg></div>
+      <p>Com a conta criada, você registra sua primeira denúncia em poucos minutos.</p>
+    </div>
+
+    <div class="acesso__painel">
+      <h1>Criar conta</h1>
+      <p>Preencha seus dados para começar a registrar denúncias.</p>
+
+      {% if form.non_field_errors %}
+        <div class="aviso-erro" role="alert">
+          <svg class="icone" aria-hidden="true"><use href="#i-alerta"/></svg>
+          <span>{% for erro in form.non_field_errors %}{{ erro }} {% endfor %}</span>
+        </div>
+      {% endif %}
+
+      <form class="acesso__form" method="post" action="{% url 'cadastro' %}" novalidate>
+        {% csrf_token %}
+
+        {% include "includes/campo.html" with campo=form.nome_completo %}
+        {% include "includes/campo.html" with campo=form.username %}
+
+        <div class="acesso__dupla">
+          {% include "includes/campo.html" with campo=form.email %}
+          {% include "includes/campo.html" with campo=form.telefone %}
+        </div>
+
+        {% include "includes/campo.html" with campo=form.password1 %}
+        {% include "includes/campo.html" with campo=form.password2 %}
+
+        <div class="caixa-campo">
+          <label class="caixa">
+            {{ form.aceite_termos }}
+            <span>Li e aceito os <a href="#">Termos de uso</a> e a <a href="#">Política de privacidade</a>.</span>
+          </label>
+          {% for erro in form.aceite_termos.errors %}<span class="campo__erro">{{ erro }}</span>{% endfor %}
+        </div>
+
+        <button class="botao botao--primario botao--largo" type="submit">Criar conta</button>
+      </form>
+
+      <p class="acesso__rodape">Já tem conta? <a href="{% url 'login' %}">Entrar</a></p>
+    </div>
+  </main>
+{% endblock %}

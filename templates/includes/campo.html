@@ -1,0 +1,7 @@
+{# Um campo de formulário completo: rótulo, campo, ajuda e erros. #}
+<div class="campo{% if campo.errors %} campo--erro{% endif %}">
+  <label for="{{ campo.id_for_label }}">{{ campo.label }}{% if not campo.field.required %} <span class="campo__opcional">(opcional)</span>{% endif %}</label>
+  {{ campo }}
+  {% if campo.help_text %}<div class="campo__ajuda" id="{{ campo.auto_id }}_helptext">{{ campo.help_text|safe }}</div>{% endif %}
+  {% for erro in campo.errors %}<span class="campo__erro">{{ erro }}</span>{% endfor %}
+</div>

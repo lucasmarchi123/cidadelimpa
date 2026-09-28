@@ -24,6 +24,11 @@
   color: var(--tinta); background: var(--papel); border: 1.5px solid var(--linha-forte); border-radius: var(--r-p); }
 .campo input:focus, .campo textarea:focus, .campo select:focus { border-color: var(--verde); }
 .campo__ajuda { font-size: .875rem; color: var(--tinta-suave); }
+.campo__ajuda ul { margin: .15rem 0 0; padding-left: 1.1rem; list-style: disc; }
+.campo__opcional { font-weight: 400; color: var(--tinta-suave); }
+.caixa-campo { display: grid; gap: .35rem; }
+.caixa { display: flex; gap: .65rem; align-items: flex-start; font-size: .95rem; }
+.caixa input { flex: none; width: 1.15rem; height: 1.15rem; margin: .2rem 0 0; accent-color: var(--verde); }
 .campo__erro { font-size: .875rem; color: var(--st-rejeitada); font-weight: 600; }
 .campo--erro input, .campo input:user-invalid { border-color: var(--st-rejeitada); }
 .aviso-erro { display: flex; gap: .7rem; align-items: flex-start; padding: .9rem 1.1rem; border-radius: var(--r-p);

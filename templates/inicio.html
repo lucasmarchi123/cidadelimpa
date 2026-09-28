@@ -12,8 +12,12 @@
           <h1>Esgoto na porta de casa não é normal.</h1>
           <p>Tire uma foto, informe o endereço e envie. Nossa equipe analisa e encaminha o caso à prefeitura.</p>
           <div class="abertura__acoes">
-            {# O destino deste botão será ligado quando o envio de denúncia existir #}
-            <a class="botao botao--primario" href="#">Fazer uma denúncia</a>
+            {% if user.is_authenticated %}
+              {# O destino será ligado quando o envio de denúncia existir #}
+              <a class="botao botao--primario" href="#">Fazer uma denúncia</a>
+            {% else %}
+              <a class="botao botao--primario" href="{% url 'cadastro' %}">Fazer uma denúncia</a>
+            {% endif %}
             {% if not user.is_authenticated %}
               <a class="botao botao--secundario" href="{% url 'login' %}">Já tenho conta</a>
             {% endif %}

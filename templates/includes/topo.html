@@ -12,8 +12,9 @@
         {% if request.resolver_match.url_name != 'login' %}
           <a href="{% url 'login' %}">Entrar</a>
         {% endif %}
-        {# O link de cadastro será ligado na Sprint 3 #}
-        <a class="botao botao--primario botao--pequeno" href="#">Criar conta</a>
+        {% if request.resolver_match.url_name != 'cadastro' %}
+          <a class="botao botao--primario botao--pequeno" href="{% url 'cadastro' %}">Criar conta</a>
+        {% endif %}
       {% endif %}
     </nav>
   </div>
