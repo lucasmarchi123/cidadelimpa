@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+
+{% block titulo %}Nova denúncia — CidadeLimpa{% endblock %}
+
+{% block conteudo %}
+  <main class="conteiner nova">
+    <div class="nova__cabecalho">
+      <h1>Nova denúncia</h1>
+      <p>Preencha as informações abaixo. Quanto mais detalhes você informar, mais rápida será a análise.</p>
+    </div>
+
+    <div class="nova__grade">
+      <aside class="dicas" aria-labelledby="dicas-titulo">
+        <h2 id="dicas-titulo">Para sua denúncia ser aceita</h2>
+        <ul>
+          <li><svg class="icone" aria-hidden="true"><use href="#i-ok"/></svg>A foto mostra o esgoto a céu aberto.</li>
+          <li><svg class="icone" aria-hidden="true"><use href="#i-ok"/></svg>O endereço permite identificar o local.</li>
+          <li><svg class="icone" aria-hidden="true"><use href="#i-ok"/></svg>A descrição corresponde ao que aparece na foto.</li>
+        </ul>
+        <p>Evite fotografar o rosto de pessoas ou placas de carro.</p>
+      </aside>
+
+      {# enctype é obrigatório para o formulário conseguir enviar arquivos #}
+      <form class="nova__form" method="post" action="{% url 'nova_denuncia' %}" enctype="multipart/form-data" novalidate>
+        {% csrf_token %}
+
+        {% if form.errors %}
+          <div class="aviso-erro" role="alert">
+            <svg class="icone" aria-hidden="true"><use href="#i-alerta"/></svg>
+            <span>Alguns campos precisam de correção. Confira as mensagens abaixo e selecione a foto novamente.</span>
+          </div>
+        {% endif %}
+
+        <fieldset class="etapa">
+          <legend><span class="etapa__numero">1</span>Onde fica o problema</legend>
+          {% include "includes/campo.html" with campo=form.municipio %}
+          <div class="etapa__linha">
+            {% include "includes/campo.html" with campo=form.logradouro %}
+            {% include "includes/campo.html" with campo=form.numero %}
+          </div>
+          <div class="etapa__linha">
+            {% include "includes/campo.html" with campo=form.bairro %}
+            {% include "includes/campo.html" with campo=form.cep %}
+          </div>
+          {% include "includes/campo.html" with campo=form.ponto_referencia %}
+        </fieldset>
+
+        <fieldset class="etapa">
+          <legend><span class="etapa__numero">2</span>Foto do problema</legend>
+          {% include "includes/campo.html" with campo=form.foto %}
+        </fieldset>
+
+        <fieldset class="etapa">
+          <legend><span class="etapa__numero">3</span>Descrição</legend>
+          {% include "includes/campo.html" with campo=form.descricao %}
+          {% include "includes/campo.html" with campo=form.data_ocorrencia %}
+        </fieldset>
+
+        <fieldset class="etapa">
+          <legend><span class="etapa__numero">4</span>Privacidade</legend>
+          <label class="opcao">
+            {{ form.anonima }}
+            <span><strong>Fazer denúncia anônima</strong><span>Seu nome não será exibido para outros usuários. A equipe de análise continua tendo acesso à autoria.</span></span>
+          </label>
+        </fieldset>
+
+        <div class="nova__acoes">
+          <button class="botao botao--primario" type="submit">Enviar denúncia</button>
+          <a class="botao botao--secundario" href="{% url 'inicio' %}">Cancelar</a>
+        </div>
+      </form>
+    </div>
+  </main>
+{% endblock %}

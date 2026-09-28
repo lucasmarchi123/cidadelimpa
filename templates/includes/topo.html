@@ -3,11 +3,30 @@
     <a class="marca" href="{% url 'inicio' %}"><svg aria-hidden="true"><use href="#logo"/></svg>CidadeLimpa</a>
     <nav class="topo__nav" aria-label="Principal">
       {% if user.is_authenticated %}
-        <span>Olá, {{ user.username }}</span>
-        <form method="post" action="{% url 'logout' %}">
-          {% csrf_token %}
-          <button class="botao botao--secundario botao--pequeno" type="submit">Sair</button>
-        </form>
+        {# Os links do feed e de "Minhas denúncias" serão ligados quando essas páginas existirem #}
+        <div class="topo__links">
+          <a href="#">Denúncias</a>
+          <a href="#">Minhas denúncias</a>
+          <a class="botao botao--primario botao--pequeno" href="{% url 'nova_denuncia' %}">Nova denúncia</a>
+          <span class="topo__usuario">Olá, {{ user.username }}</span>
+          <form method="post" action="{% url 'logout' %}">
+            {% csrf_token %}
+            <button class="botao botao--secundario botao--pequeno" type="submit">Sair</button>
+          </form>
+        </div>
+        <details class="menu-movel">
+          <summary>Menu</summary>
+          <div class="menu-movel__painel">
+            <a href="#">Denúncias</a>
+            <a href="#">Minhas denúncias</a>
+            <a href="{% url 'nova_denuncia' %}">Nova denúncia</a>
+            <hr>
+            <form method="post" action="{% url 'logout' %}">
+              {% csrf_token %}
+              <button type="submit">Sair</button>
+            </form>
+          </div>
+        </details>
       {% else %}
         {% if request.resolver_match.url_name != 'login' %}
           <a href="{% url 'login' %}">Entrar</a>

@@ -93,3 +93,27 @@
 .selo { display: grid; place-items: center; width: 4rem; height: 4rem; border-radius: 14px;
   background: var(--menta-forte); color: var(--icone-passo); }
 .selo .icone { width: 1.9rem; height: 1.9rem; }
+
+/* Cabeçalho de quem está logado */
+.topo__links { display: flex; align-items: center; gap: 1.4rem; }
+.topo__links a[aria-current="page"] { text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: .45em; }
+.topo__usuario { color: var(--tinta-suave); font-size: .95rem; }
+.menu-movel { display: none; position: relative; }
+.menu-movel summary { list-style: none; cursor: pointer; display: inline-flex; align-items: center; gap: .45rem;
+  padding: .5rem .85rem; border: 1.5px solid var(--linha-forte); border-radius: 8px; font-weight: 650; }
+.menu-movel summary::-webkit-details-marker { display: none; }
+.menu-movel__painel { position: absolute; right: 0; top: calc(100% + .5rem); z-index: 5; min-width: 15rem;
+  display: grid; gap: .25rem; padding: .6rem; background: var(--papel); border: 1px solid var(--linha);
+  border-radius: var(--r-m); box-shadow: 0 16px 32px -18px rgba(10, 40, 25, .45); }
+.menu-movel__painel a, .menu-movel__painel button { display: block; width: 100%; text-align: left; padding: .6rem .7rem;
+  border-radius: 8px; color: var(--tinta); text-decoration: none; font: inherit; font-weight: 600; background: none; border: 0; cursor: pointer; }
+.menu-movel__painel a:hover, .menu-movel__painel button:hover { background: var(--menta); }
+.menu-movel__painel hr { border: 0; border-top: 1px solid var(--linha); margin: .3rem 0; }
+@media (max-width: 52rem) { .topo__links { display: none; } .menu-movel { display: block; } }
+
+/* Mensagens do sistema (sucesso, erro) */
+.mensagens { display: grid; gap: .6rem; padding-top: 1.25rem; }
+.aviso { padding: .9rem 1.1rem; border-radius: var(--r-p); font-size: .98rem; font-weight: 500; }
+.aviso--success { background: var(--st-resolvida-fundo); }
+.aviso--error { background: var(--st-rejeitada-fundo); }
+.aviso--info, .aviso--warning { background: var(--st-enviada-fundo); }

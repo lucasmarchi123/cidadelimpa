@@ -17,6 +17,14 @@
 
   {% block topo %}{% include "includes/topo.html" %}{% endblock %}
 
+  {% if messages %}
+    <div class="conteiner mensagens">
+      {% for mensagem in messages %}
+        <div class="aviso aviso--{{ mensagem.tags }}" role="status">{{ mensagem }}</div>
+      {% endfor %}
+    </div>
+  {% endif %}
+
   {% block conteudo %}{% endblock %}
 
   {% block rodape %}{% include "includes/rodape.html" %}{% endblock %}

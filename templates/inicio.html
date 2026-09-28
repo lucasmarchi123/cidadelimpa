@@ -13,8 +13,7 @@
           <p>Tire uma foto, informe o endereço e envie. Nossa equipe analisa e encaminha o caso à prefeitura.</p>
           <div class="abertura__acoes">
             {% if user.is_authenticated %}
-              {# O destino será ligado quando o envio de denúncia existir #}
-              <a class="botao botao--primario" href="#">Fazer uma denúncia</a>
+              <a class="botao botao--primario" href="{% url 'nova_denuncia' %}">Fazer uma denúncia</a>
             {% else %}
               <a class="botao botao--primario" href="{% url 'cadastro' %}">Fazer uma denúncia</a>
             {% endif %}
