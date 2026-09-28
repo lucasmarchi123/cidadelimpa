@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block titulo %}Entrar — CidadeLimpa{% endblock %}
+
+{% block conteudo %}
+  <main class="conteiner acesso">
+    <div class="acesso__arte" aria-hidden="true">
+      <div class="placa placa--compacta">
+        <span class="placa__bairro">Alecrim</span>
+        <span class="placa__rua">Rua das Flores</span>
+        <span class="placa__cep">CEP 59030-000</span>
+      </div>
+      <div class="denuncia__foto"><svg viewBox="0 0 320 200" preserveAspectRatio="xMidYMid slice"><use href="#rua"/></svg></div>
+      <p>Sua rua merece ser cuidada.</p>
+    </div>
+
+    <div class="acesso__painel">
+      <h1>Entrar</h1>
+      <p>Entre para enviar denúncias e acompanhar as que você já registrou.</p>
+
+      {% if form.errors %}
+        <div class="aviso-erro" role="alert">
+          <svg class="icone" aria-hidden="true"><use href="#i-alerta"/></svg>
+          <span>Nome de usuário ou senha incorretos. Verifique os dados e tente novamente.</span>
+        </div>
+      {% endif %}
+
+      <form class="acesso__form" method="post" action="{% url 'login' %}">
+        {% csrf_token %}
+        {% if next %}<input type="hidden" name="next" value="{{ next }}">{% endif %}
+
+        <div class="campo">
+          <label for="{{ form.username.id_for_label }}">Nome de usuário</label>
+          <input id="{{ form.username.id_for_label }}" name="{{ form.username.html_name }}"
+                 type="text" value="{{ form.username.value|default:'' }}"
+                 autocomplete="username" autocapitalize="none" required autofocus>
+        </div>
+
+        <div class="campo">
+          <label for="{{ form.password.id_for_label }}">Senha</label>
+          <input id="{{ form.password.id_for_label }}" name="{{ form.password.html_name }}"
+                 type="password" autocomplete="current-password" required>
+        </div>
+
+        <div class="acesso__linha"><a href="{% url 'password_reset' %}">Esqueci minha senha</a></div>
+
+        <button class="botao botao--primario botao--largo" type="submit">Entrar</button>
+      </form>
+
+      {# O link de cadastro será ligado na Sprint 3 #}
+      <p class="acesso__rodape">Ainda não tem conta? <a href="#">Criar conta</a></p>
+    </div>
+  </main>
+{% endblock %}

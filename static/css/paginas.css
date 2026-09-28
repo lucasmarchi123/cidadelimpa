@@ -1,0 +1,125 @@
+/* Estilos específicos de cada página — CidadeLimpa */
+
+/* Início: abertura */
+.abertura { background: var(--menta); }
+.abertura__grade { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, .9fr); gap: 2.5rem;
+  align-items: center; padding-block: clamp(2rem, 6vw, 4.5rem) 1rem; }
+.abertura__texto { display: grid; gap: 1.3rem; }
+.abertura__texto > p { font-size: 1.2rem; color: var(--tinta-suave); }
+.abertura__acoes { display: flex; flex-wrap: wrap; gap: .75rem; }
+.abertura__nota { display: flex; align-items: center; gap: .55rem; font-size: .98rem; color: var(--tinta-suave); }
+.abertura__nota .icone { color: var(--verde); }
+
+.visual { position: relative; display: grid; place-items: center; min-height: 26rem; }
+.visual__mancha { position: absolute; inset: 0; width: 100%; height: 100%; color: var(--menta-forte); }
+.visual__folha { position: absolute; width: 3.2rem; color: var(--verde-vivo); }
+.visual__folha--a { top: 6%; left: 6%; transform: rotate(-25deg); }
+.visual__folha--b { bottom: 8%; right: 4%; width: 2.6rem; transform: rotate(140deg); }
+.visual__sol { position: absolute; top: 4%; right: 12%; width: 4.2rem; height: 4.2rem; border-radius: 50%; background: var(--sol); }
+
+.celular { position: relative; width: min(18.5rem, 100%); padding: .6rem; border-radius: 2.4rem;
+  background: #10251A; box-shadow: 0 30px 50px -25px rgba(10, 50, 28, .6); }
+.celular__tela { display: grid; gap: .75rem; padding: 1rem .85rem; border-radius: 1.9rem; background: var(--papel); }
+.celular__tela .denuncia__foto { aspect-ratio: 4 / 3; }
+.celular__linha { display: flex; justify-content: space-between; align-items: center; gap: .5rem; font-size: .85rem; color: var(--tinta-suave); }
+.curtidas { display: inline-flex; align-items: center; gap: .35rem; }
+.curtidas .icone { color: var(--st-rejeitada); fill: currentColor; stroke: none; width: 1rem; height: 1rem; }
+
+/* Início: seções */
+.secao { padding-block: clamp(3rem, 7vw, 5rem); }
+.secao__topo { display: grid; gap: .6rem; margin-bottom: 2.5rem; }
+.secao__topo p { color: var(--tinta-suave); font-size: 1.1rem; }
+.secao--menta { background: var(--menta); }
+
+.passos-area { position: relative; }
+.passos__caminho { position: absolute; top: 2.2rem; left: 8%; width: 84%; height: 2rem; color: var(--linha-forte); }
+.passos { position: relative; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 1.5rem; counter-reset: passo; }
+.passos li { display: grid; gap: .55rem; justify-items: center; text-align: center; counter-increment: passo; }
+.passos__icone { position: relative; display: grid; place-items: center; width: 4.4rem; height: 4.4rem;
+  border-radius: 14px; background: var(--menta-forte); color: var(--icone-passo); }
+.passos__icone .icone { width: 1.8rem; height: 1.8rem; }
+.passos__icone::after { content: counter(passo); position: absolute; top: -.35rem; right: -.35rem;
+  display: grid; place-items: center; width: 1.6rem; height: 1.6rem; border-radius: 50%;
+  background: var(--verde); color: #fff; font-size: .85rem; font-weight: 800; }
+.passos p { font-size: .95rem; color: var(--tinta-suave); }
+
+.criterios { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.25rem; }
+.criterios__bloco { display: grid; gap: 1rem; align-content: start; padding: 1.6rem;
+  border-radius: var(--r-g); }
+.criterios__bloco--sim { background: var(--st-resolvida-fundo); }
+.criterios__bloco--nao { background: var(--st-rejeitada-fundo); }
+.criterios__bloco ul { display: grid; gap: .7rem; }
+.criterios__bloco li { display: flex; gap: .65rem; align-items: flex-start; }
+.criterios__bloco--sim .icone { color: var(--st-resolvida); }
+.criterios__bloco--nao .icone { color: var(--st-rejeitada); }
+.criterios__nota { margin-top: 1.25rem; display: flex; gap: .65rem; align-items: center; padding: 1rem 1.3rem;
+  border-radius: var(--r-m); background: var(--papel); border: 1.5px dashed var(--verde-vivo); font-weight: 500; max-width: none; }
+.criterios__nota .icone { color: var(--verde); }
+
+.status-lista { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1rem; }
+.status-lista li { display: grid; gap: .7rem; align-content: start; padding: 1.3rem; background: var(--papel);
+  border-radius: var(--r-m); }
+.status-lista li:last-child { background: transparent; border: 1.5px dashed var(--linha-forte); }
+.status-lista .status { justify-self: start; }
+.status-lista p { font-size: .98rem; color: var(--tinta-suave); }
+
+.dupla { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(2rem, 5vw, 4rem); align-items: center; }
+.dupla__texto { display: grid; gap: 1rem; }
+.dupla__texto > p { color: var(--tinta-suave); font-size: 1.1rem; }
+
+.historico { position: relative; padding: 1.8rem; border-radius: var(--r-g); padding: 2rem;
+  background: var(--menta); display: grid; gap: 1.4rem; }
+.linha-tempo { display: grid; gap: 1rem; padding-left: 1.4rem; border-left: 3px dotted var(--verde-vivo); margin-left: .5rem; }
+.linha-tempo li { position: relative; display: grid; gap: .2rem; justify-items: start; }
+.linha-tempo li::before { content: ""; position: absolute; left: calc(-1.4rem - 9px); top: .3rem;
+  width: 15px; height: 15px; border-radius: 50%; background: var(--papel); border: 3px solid var(--verde); }
+.linha-tempo time { font-size: .85rem; color: var(--tinta-suave); font-weight: 600; }
+
+.protecao { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: clamp(1.5rem, 4vw, 3rem); align-items: start;
+  padding: clamp(1.5rem, 4vw, 2.5rem); border-radius: var(--r-g); background: var(--papel); border: 1px solid var(--linha); }
+.protecao__escudo { display: grid; place-items: center; width: 5.5rem; height: 5.5rem; border-radius: 18px;
+  background: var(--menta-forte); color: var(--icone-passo); }
+.protecao__escudo .icone { width: 2.6rem; height: 2.6rem; }
+.protecao__texto { display: grid; gap: 1rem; }
+.protecao__texto > p { color: var(--tinta-suave); }
+.protecao ul { display: grid; gap: .8rem; max-width: 46rem; }
+.protecao li { display: flex; gap: .6rem; align-items: flex-start; font-size: .98rem; }
+.protecao li .icone { color: var(--verde); margin-top: .15rem; }
+
+/* Login */
+.acesso { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(2rem, 5vw, 4rem);
+  align-items: center; padding-block: clamp(2rem, 6vw, 4rem); }
+.acesso__arte { position: relative; display: grid; grid-template-rows: auto 1fr auto; gap: 1.2rem;
+  align-self: stretch; padding: 2rem; border-radius: var(--r-g); background: var(--menta); overflow: hidden; }
+.acesso__arte .placa { padding: 1rem 2rem .9rem; }
+.acesso__arte .placa__rua { font-size: clamp(1.6rem, 3vw, 2.3rem); }
+.acesso__arte .placa__bairro, .acesso__arte .placa__cep { font-size: .8rem; }
+.acesso__arte .denuncia__foto { width: 100%; height: 100%; min-height: 15rem; aspect-ratio: auto; border-radius: var(--r-m); }
+.acesso__arte p { text-align: center; color: var(--tinta-suave); font-weight: 600; }
+.acesso__painel { width: 100%; max-width: 25rem; display: grid; gap: 1.3rem; }
+.acesso__painel > p { color: var(--tinta-suave); }
+.acesso__form { display: grid; gap: 1.1rem; }
+.acesso__linha { display: flex; justify-content: flex-end; font-size: .95rem; margin-top: -.35rem; }
+.acesso__rodape { padding-top: 1.2rem; border-top: 1px solid var(--linha); font-size: .95rem; }
+
+/* Responsivo */
+@media (max-width: 60rem) {
+  .passos { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .passos__caminho { display: none; }
+  .status-lista { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 48rem) {
+  .abertura__grade, .dupla, .criterios, .acesso { grid-template-columns: 1fr; }
+  .visual { min-height: 22rem; }
+  .protecao { grid-template-columns: 1fr; }
+  .protecao ul { grid-template-columns: 1fr; }
+  .acesso__arte { display: none; }
+  .acesso { justify-items: center; }
+}
+@media (max-width: 32rem) {
+  .passos, .status-lista { grid-template-columns: 1fr; }
+  .passos li { grid-template-columns: auto 1fr; justify-items: start; text-align: left; column-gap: 1rem; }
+  .passos__icone { grid-row: span 2; }
+  .topo__nav { gap: .8rem; }
+  .topo__nav .botao { padding: .55rem .95rem; }
+}

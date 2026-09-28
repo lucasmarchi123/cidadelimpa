@@ -1,0 +1,56 @@
+/* Cores, fontes e medidas — CidadeLimpa */
+
+:root {
+  --verde: #1E7A46;
+  --verde-escuro: #155C34;
+  --verde-vivo: #3DBE6B;
+  --menta: #E6F6EC;
+  --menta-forte: #C4EBD2;
+  --sol: #F6C343;
+  --placa: #14532D;
+
+  --papel: #FFFFFF;
+  --fundo: #FAFDFB;
+  --tinta: #17332A;
+  --tinta-suave: #4B6358;
+  --linha: #D5E6DB;
+  --linha-forte: #8FA89A;
+  --link: #1E7A46;
+  --rodape: #14532D;
+  --icone-passo: #155C34;
+
+  --st-enviada: #8A5A00;   --st-enviada-fundo: #FFF1CC;
+  --st-aceita: #1C5E9A;    --st-aceita-fundo: #E2EEFA;
+  --st-resolvida: #1E7A46; --st-resolvida-fundo: #DDF3E5;
+  --st-rejeitada: #B0362F; --st-rejeitada-fundo: #FCE5E2;
+
+  --r-p: 8px; --r-m: 12px; --r-g: 18px;
+  --fonte: "Bricolage Grotesque", "Segoe UI", Arial, sans-serif;
+  --largura: 72rem;
+  --margem: clamp(1.1rem, 4vw, 2rem);
+
+  box-sizing: border-box;
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  color-scheme: light dark;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --papel: #16231C; --fundo: #121D17; --menta: #1C3127; --menta-forte: #25432F;
+    --tinta: #E4F2E9; --tinta-suave: #A6C2B1; --linha: #2C4538; --linha-forte: #5E7C6B;
+    --link: #7FD6A0; --rodape: #0D2217; --icone-passo: #9BE3B6;
+    --st-enviada: #F2C66B;   --st-enviada-fundo: #3A2E12;
+    --st-aceita: #8DBDEB;    --st-aceita-fundo: #1B2F44;
+    --st-resolvida: #7FD6A0; --st-resolvida-fundo: #1B3827;
+    --st-rejeitada: #F09A92; --st-rejeitada-fundo: #3E211E;
+  }
+}
+:root[data-theme="dark"] {
+  --papel: #16231C; --fundo: #121D17; --menta: #1C3127; --menta-forte: #25432F;
+  --tinta: #E4F2E9; --tinta-suave: #A6C2B1; --linha: #2C4538; --linha-forte: #5E7C6B;
+  --link: #7FD6A0; --rodape: #0D2217; --icone-passo: #9BE3B6;
+  --st-enviada: #F2C66B;   --st-enviada-fundo: #3A2E12;
+  --st-aceita: #8DBDEB;    --st-aceita-fundo: #1B2F44;
+  --st-resolvida: #7FD6A0; --st-resolvida-fundo: #1B3827;
+  --st-rejeitada: #F09A92; --st-rejeitada-fundo: #3E211E;
+}

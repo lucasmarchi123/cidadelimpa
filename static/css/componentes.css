@@ -1,0 +1,85 @@
+/* Componentes reutilizados — CidadeLimpa */
+
+.conteiner { width: 100%; max-width: var(--largura); margin-inline: auto; padding-inline: var(--margem); }
+.icone { width: 1.25rem; height: 1.25rem; flex: none; fill: none; stroke: currentColor;
+  stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+.botao { display: inline-flex; align-items: center; justify-content: center; gap: .5rem;
+  padding: .8rem 1.35rem; border: 2px solid transparent; border-radius: 8px;
+  font: inherit; font-weight: 650; font-size: 1rem; line-height: 1.2; white-space: nowrap;
+  text-decoration: none; cursor: pointer; transition: background-color .15s, color .15s, border-color .15s; }
+.botao--primario { background: var(--verde); color: #fff; }
+.botao--primario:hover { background: var(--verde-escuro); }
+.botao--secundario { border-color: var(--verde); color: var(--link); background: transparent; }
+.botao--secundario:hover { background: var(--menta); }
+.botao--perigo { background: var(--st-rejeitada); color: #fff; }
+.botao--largo { width: 100%; }
+.botao--pequeno { padding: .45rem .95rem; font-size: .92rem; }
+.botao:disabled { opacity: .45; cursor: not-allowed; }
+@media (prefers-reduced-motion: reduce) { .botao { transition: none; } }
+
+.campo { display: grid; gap: .35rem; align-content: start; }
+.campo label { font-weight: 650; font-size: .95rem; }
+.campo input, .campo textarea, .campo select { width: 100%; padding: .8rem 1rem; font: inherit; font-size: 1rem;
+  color: var(--tinta); background: var(--papel); border: 1.5px solid var(--linha-forte); border-radius: var(--r-p); }
+.campo input:focus, .campo textarea:focus, .campo select:focus { border-color: var(--verde); }
+.campo__ajuda { font-size: .875rem; color: var(--tinta-suave); }
+.campo__erro { font-size: .875rem; color: var(--st-rejeitada); font-weight: 600; }
+.campo--erro input, .campo input:user-invalid { border-color: var(--st-rejeitada); }
+.aviso-erro { display: flex; gap: .7rem; align-items: flex-start; padding: .9rem 1.1rem; border-radius: var(--r-p);
+  background: var(--st-rejeitada-fundo); color: var(--tinta); font-size: .95rem; }
+.aviso-erro .icone { color: var(--st-rejeitada); margin-top: .1rem; }
+
+.status { display: inline-flex; align-items: center; gap: .4rem; padding: .25rem .65rem .3rem;
+  border-radius: 6px; font-size: .85rem; font-weight: 700; white-space: nowrap; }
+.status::before { content: ""; width: .5rem; height: .5rem; border-radius: 50%; background: currentColor; }
+.status--enviada   { color: var(--st-enviada);   background: var(--st-enviada-fundo); }
+.status--aceita    { color: var(--st-aceita);    background: var(--st-aceita-fundo); }
+.status--resolvida { color: var(--st-resolvida); background: var(--st-resolvida-fundo); }
+.status--rejeitada { color: var(--st-rejeitada); background: var(--st-rejeitada-fundo); }
+
+/* Placa de rua */
+.placa { position: relative; display: grid; gap: .1rem; padding: .85rem 1.7rem .75rem;
+  background: var(--placa); color: #fff; border-radius: 6px;
+  box-shadow: inset 0 0 0 4px var(--placa), inset 0 0 0 6px #fff, 0 10px 24px -12px rgba(10, 50, 28, .55); }
+.placa::before, .placa::after { content: ""; position: absolute; top: 50%; width: 7px; height: 7px;
+  margin-top: -3.5px; border-radius: 50%; background: #CFE3D6; }
+.placa::before { left: .8rem; } .placa::after { right: .8rem; }
+.placa__bairro, .placa__cep { font-size: .78rem; font-weight: 600; }
+.placa__cep { justify-self: end; }
+.placa__rua { font-size: clamp(1.6rem, 4vw, 2.4rem); font-weight: 800; font-stretch: 75%;
+  text-transform: uppercase; line-height: 1; }
+.placa--compacta { padding: .5rem 1.25rem .45rem; border-radius: 8px;
+  box-shadow: inset 0 0 0 3px var(--placa), inset 0 0 0 4.5px #fff; border-radius: 5px; }
+.placa--compacta .placa__rua { font-size: 1.2rem; }
+.placa--compacta .placa__bairro, .placa--compacta .placa__cep { font-size: .66rem; }
+.placa--compacta::before, .placa--compacta::after { width: 5px; height: 5px; margin-top: -2.5px; }
+.placa--compacta::before { left: .45rem; } .placa--compacta::after { right: .45rem; }
+
+/* Cartão de denúncia */
+.denuncia { display: grid; gap: .85rem; padding: .9rem; background: var(--papel);
+  border: 1px solid var(--linha); border-radius: var(--r-m); }
+.denuncia__foto { border-radius: var(--r-p); overflow: hidden; aspect-ratio: 16 / 9; }
+.denuncia__foto svg { width: 100%; height: 100%; }
+.denuncia__meta { display: flex; flex-wrap: wrap; align-items: center; gap: .4rem .8rem;
+  font-size: .9rem; color: var(--tinta-suave); }
+.denuncia__rodape { display: flex; align-items: center; gap: .75rem; padding-top: .75rem;
+  border-top: 1px solid var(--linha); font-size: .9rem; color: var(--tinta-suave); }
+
+/* Topo e rodapé */
+.topo { background: var(--papel); border-bottom: 1px solid var(--linha); }
+.topo--menta { background: var(--menta); border-bottom: 0; }
+.topo__barra { display: flex; align-items: center; justify-content: space-between; gap: 1rem; min-height: 4.5rem; }
+.marca { display: inline-flex; align-items: center; gap: .55rem; color: var(--tinta); text-decoration: none;
+  font-weight: 800; font-size: 1.35rem; letter-spacing: -0.01em; }
+.marca svg { width: 2rem; height: 2rem; }
+.topo__nav { display: flex; align-items: center; gap: 1.2rem; }
+.topo__nav a:not(.botao) { color: var(--tinta); font-weight: 600; text-decoration: none; }
+.topo__nav a:not(.botao):hover { text-decoration: underline; }
+
+.onda { width: 100%; height: clamp(1.8rem, 4vw, 3.2rem); color: var(--fundo); }
+.rodape { color: #D4EBDC; background: var(--rodape); font-size: .92rem; }
+.rodape .onda { color: var(--rodape); background: var(--fundo); }
+.rodape__barra { display: flex; flex-wrap: wrap; justify-content: space-between; gap: .75rem 1.5rem; padding-block: 1.5rem 2rem; }
+.rodape__links { display: flex; gap: 1.5rem; }
+.rodape a { color: #fff; }

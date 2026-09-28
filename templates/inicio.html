@@ -1,0 +1,140 @@
+{% extends "base.html" %}
+
+{% block titulo %}CidadeLimpa — denúncias de esgoto a céu aberto{% endblock %}
+
+{% block topo %}{% include "includes/topo.html" with classe_topo="topo--menta" %}{% endblock %}
+
+{% block conteudo %}
+  <main>
+    <section class="abertura">
+      <div class="conteiner abertura__grade">
+        <div class="abertura__texto">
+          <h1>Esgoto na porta de casa não é normal.</h1>
+          <p>Tire uma foto, informe o endereço e envie. Nossa equipe analisa e encaminha o caso à prefeitura.</p>
+          <div class="abertura__acoes">
+            {# O destino deste botão será ligado quando o envio de denúncia existir #}
+            <a class="botao botao--primario" href="#">Fazer uma denúncia</a>
+            {% if not user.is_authenticated %}
+              <a class="botao botao--secundario" href="{% url 'login' %}">Já tenho conta</a>
+            {% endif %}
+          </div>
+          <p class="abertura__nota"><svg class="icone" aria-hidden="true"><use href="#i-olho"/></svg>Você pode fazer a denúncia de forma anônima.</p>
+        </div>
+
+        <div class="visual" aria-hidden="true">
+          <svg class="visual__mancha" viewBox="0 0 400 400" preserveAspectRatio="none"><path fill="currentColor" d="M322 64c40 36 56 102 38 160s-66 112-130 124-140-12-170-66S30 158 62 104 150 20 206 20s76 8 116 44z"/></svg>
+          <div class="celular">
+            <div class="celular__tela">
+              <div class="placa placa--compacta">
+                <span class="placa__bairro">Alecrim</span>
+                <span class="placa__rua">Rua das Flores</span>
+                <span class="placa__cep">CEP 59030-000</span>
+              </div>
+              <div class="denuncia__foto"><svg viewBox="0 0 320 200" preserveAspectRatio="xMidYMid slice"><use href="#rua"/></svg></div>
+              <div class="celular__linha"><span class="status status--aceita">Aceita</span><span>3 denúncias no local</span></div>
+              <div class="celular__linha"><span class="curtidas"><svg class="icone"><use href="#i-coracao"/></svg>12 curtidas</span><span>Natal/RN</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <svg class="onda" viewBox="0 0 1440 80" preserveAspectRatio="none" aria-hidden="true"><path fill="currentColor" d="M0 50c240 18 480 22 720 8s480-20 720 2v20H0z"/></svg>
+    </section>
+
+    <section class="secao">
+      <div class="conteiner">
+        <div class="secao__topo">
+          <h2>Como denunciar</h2>
+          <p>O registro leva poucos minutos. Quanto mais detalhes você informar, mais rápida será a análise.</p>
+        </div>
+        <div class="passos-area">
+          <svg class="passos__caminho" viewBox="0 0 800 40" preserveAspectRatio="none" aria-hidden="true"><path d="M0 20 C80 0 120 40 200 20 S320 0 400 20 520 40 600 20 720 0 800 20" fill="none" stroke="currentColor" stroke-width="2" stroke-dasharray="1 9" stroke-linecap="round"/></svg>
+          <ol class="passos">
+            <li><span class="passos__icone"><svg class="icone" aria-hidden="true"><use href="#i-usuario"/></svg></span><h3>Entre na sua conta</h3><p>Ainda não tem conta? O cadastro é rápido e gratuito.</p></li>
+            <li><span class="passos__icone"><svg class="icone" aria-hidden="true"><use href="#i-pino"/></svg></span><h3>Identifique o local</h3><p>Informe rua, número, bairro e um ponto de referência.</p></li>
+            <li><span class="passos__icone"><svg class="icone" aria-hidden="true"><use href="#i-camera"/></svg></span><h3>Tire a foto</h3><p>Registre o esgoto com clareza. A foto é a principal prova do problema.</p></li>
+            <li><span class="passos__icone"><svg class="icone" aria-hidden="true"><use href="#i-balao"/></svg></span><h3>Descreva o problema</h3><p>Conte desde quando ocorre, se há mau cheiro e se atinge casas ou comércios.</p></li>
+            <li><span class="passos__icone"><svg class="icone" aria-hidden="true"><use href="#i-envio"/></svg></span><h3>Envie e acompanhe</h3><p>Cada mudança de status aparece no seu histórico de denúncias.</p></li>
+          </ol>
+        </div>
+      </div>
+    </section>
+
+    <section class="secao secao--menta">
+      <div class="conteiner">
+        <div class="secao__topo">
+          <h2>Como as denúncias são analisadas</h2>
+          <p>Nossa equipe analisa cada denúncia antes de encaminhar o caso à prefeitura. Assim, apenas casos comprovados chegam até lá.</p>
+        </div>
+        <div class="criterios">
+          <div class="criterios__bloco criterios__bloco--sim">
+            <h3>A denúncia é aceita quando</h3>
+            <ul>
+              <li><svg class="icone" aria-hidden="true"><use href="#i-ok"/></svg>A foto mostra o esgoto a céu aberto.</li>
+              <li><svg class="icone" aria-hidden="true"><use href="#i-ok"/></svg>O endereço permite identificar o local.</li>
+              <li><svg class="icone" aria-hidden="true"><use href="#i-ok"/></svg>A descrição corresponde ao que aparece na foto.</li>
+            </ul>
+          </div>
+          <div class="criterios__bloco criterios__bloco--nao">
+            <h3>A denúncia é recusada quando</h3>
+            <ul>
+              <li><svg class="icone" aria-hidden="true"><use href="#i-x"/></svg>A foto mostra outro tipo de problema, como lixo ou buraco.</li>
+              <li><svg class="icone" aria-hidden="true"><use href="#i-x"/></svg>As informações não são suficientes para identificar o local.</li>
+              <li><svg class="icone" aria-hidden="true"><use href="#i-x"/></svg>O conteúdo contém ofensas ou expõe outras pessoas, como rostos visíveis.</li>
+            </ul>
+          </div>
+        </div>
+        <p class="criterios__nota"><svg class="icone" aria-hidden="true"><use href="#i-alerta"/></svg>Já existe denúncia neste endereço? Envie a sua mesmo assim. Denúncias repetidas não são recusadas: elas se somam ao histórico do local e reforçam o pedido.</p>
+      </div>
+    </section>
+
+    <section class="secao secao--menta" style="padding-top:0">
+      <div class="conteiner">
+        <div class="secao__topo"><h2>O que cada status significa</h2></div>
+        <ol class="status-lista">
+          <li><span class="status status--enviada">Enviada</span><p>A denúncia chegou à nossa central e está aguardando análise.</p></li>
+          <li><span class="status status--aceita">Aceita</span><p>Nossa equipe confirmou o problema e vai encaminhar o caso à prefeitura. A data do encaminhamento aparece na própria denúncia.</p></li>
+          <li><span class="status status--resolvida">Resolvida</span><p>O problema foi solucionado no local e a denúncia foi encerrada.</p></li>
+          <li><span class="status status--rejeitada">Rejeitada</span><p>A denúncia não atendeu aos critérios de análise. Confira os requisitos acima e envie uma nova denúncia com as informações corrigidas.</p></li>
+        </ol>
+      </div>
+    </section>
+
+    <section class="secao">
+      <div class="conteiner dupla">
+        <div class="dupla__texto">
+          <h2>Um endereço, um histórico</h2>
+          <p>Quando outras pessoas denunciam o mesmo endereço, os registros ficam reunidos no histórico do local. Assim é possível ver há quanto tempo o problema existe, e o pedido chega com mais força à prefeitura.</p>
+        </div>
+        <div class="historico">
+          <div class="placa placa--compacta">
+            <span class="placa__bairro">Paraíso</span>
+            <span class="placa__rua">Rua São José</span>
+            <span class="placa__cep">CEP 59200-000</span>
+          </div>
+          <ol class="linha-tempo">
+            <li><time datetime="2026-08-12">12/08/2026</time><span>Primeira denúncia registrada</span></li>
+            <li><time datetime="2026-08-27">27/08/2026</time><span>Nova denúncia no mesmo endereço</span></li>
+            <li><time datetime="2026-09-05">05/09/2026</time><span>Caso encaminhado à prefeitura <span class="status status--aceita">Aceita</span></span></li>
+          </ol>
+        </div>
+      </div>
+    </section>
+
+    <section class="secao" style="padding-top:0">
+      <div class="conteiner">
+        <div class="protecao">
+          <span class="protecao__escudo"><svg class="icone" aria-hidden="true"><use href="#i-escudo"/></svg></span>
+          <div class="protecao__texto">
+            <h2>Seus dados estão protegidos</h2>
+            <p>Seguimos a Lei Geral de Proteção de Dados (Lei nº 13.709/2018) e coletamos apenas as informações necessárias para o funcionamento da sua conta.</p>
+            <ul>
+              <li><svg class="icone" aria-hidden="true"><use href="#i-olho"/></svg><span>Na denúncia anônima, seu nome não é exibido para outros usuários. Apenas a equipe responsável pela análise tem acesso à autoria.</span></li>
+              <li><svg class="icone" aria-hidden="true"><use href="#i-predio"/></svg><span>A prefeitura recebe o endereço, a foto e a descrição do problema. Seus dados pessoais não são repassados.</span></li>
+              <li><svg class="icone" aria-hidden="true"><use href="#i-cadeado"/></svg><span>Sua senha é armazenada de forma criptografada e não pode ser vista nem pela nossa equipe.</span></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+{% endblock %}

@@ -1,0 +1,24 @@
+{% load static %}<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>{% block titulo %}CidadeLimpa{% endblock %}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,300..800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'css/tokens.css' %}">
+  <link rel="stylesheet" href="{% static 'css/base.css' %}">
+  <link rel="stylesheet" href="{% static 'css/componentes.css' %}">
+  <link rel="stylesheet" href="{% static 'css/paginas.css' %}">
+</head>
+<body>
+  {% include "includes/icones.html" %}
+
+  {% block topo %}{% include "includes/topo.html" %}{% endblock %}
+
+  {% block conteudo %}{% endblock %}
+
+  {% block rodape %}{% include "includes/rodape.html" %}{% endblock %}
+</body>
+</html>

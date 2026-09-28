@@ -1,0 +1,20 @@
+<header class="topo {{ classe_topo }}">
+  <div class="conteiner topo__barra">
+    <a class="marca" href="{% url 'inicio' %}"><svg aria-hidden="true"><use href="#logo"/></svg>CidadeLimpa</a>
+    <nav class="topo__nav" aria-label="Principal">
+      {% if user.is_authenticated %}
+        <span>Olá, {{ user.username }}</span>
+        <form method="post" action="{% url 'logout' %}">
+          {% csrf_token %}
+          <button class="botao botao--secundario botao--pequeno" type="submit">Sair</button>
+        </form>
+      {% else %}
+        {% if request.resolver_match.url_name != 'login' %}
+          <a href="{% url 'login' %}">Entrar</a>
+        {% endif %}
+        {# O link de cadastro será ligado na Sprint 3 #}
+        <a class="botao botao--primario botao--pequeno" href="#">Criar conta</a>
+      {% endif %}
+    </nav>
+  </div>
+</header>
