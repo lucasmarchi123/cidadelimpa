@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block titulo %}Sobre o projeto — CidadeLimpa{% endblock %}
+
+{% block conteudo %}
+  <main class="conteiner pagina">
+    <section class="sobre-topo">
+      <div class="sobre-topo__texto">
+        <h1>Sobre o projeto</h1>
+        <p>O CidadeLimpa nasceu de um problema que muita gente conhece de perto: esgoto correndo a céu aberto na porta de casa, sem saber a quem recorrer.</p>
+        <p>Queremos que cada morador consiga registrar o problema em poucos minutos e acompanhar o que acontece depois. Quando muitas pessoas denunciam o mesmo lugar, a situação fica impossível de ignorar.</p>
+      </div>
+      <div class="sobre-topo__arte" aria-hidden="true">
+        <div class="placa placa--compacta"><span class="placa__bairro">Seu bairro</span><span class="placa__rua">Sua rua</span><span class="placa__cep">Rio Grande do Norte</span></div>
+        <div class="denuncia__foto"><svg viewBox="0 0 320 200" preserveAspectRatio="xMidYMid slice"><use href="#rua"/></svg></div>
+      </div>
+    </section>
+
+    <section class="sobre-bloco">
+      <h2>Por que isso importa</h2>
+      <p>Esgoto a céu aberto traz mau cheiro, atrai insetos e ratos e aumenta o risco de doenças, principalmente entre crianças e idosos. Muitas vezes o problema se arrasta por meses porque não chega de forma organizada a quem pode resolvê-lo.</p>
+    </section>
+
+    <section class="sobre-bloco">
+      <h2>Como atuamos</h2>
+      <ul class="atuacao">
+        <li><span class="passos__icone"><svg class="icone" aria-hidden="true"><use href="#i-pino"/></svg></span><h3>Reunimos</h3><p>Cada denúncia fica registrada com foto, endereço e descrição, e as do mesmo local formam um único histórico.</p></li>
+        <li><span class="passos__icone"><svg class="icone" aria-hidden="true"><use href="#i-ok"/></svg></span><h3>Analisamos</h3><p>Nossa equipe confere cada registro com critérios públicos antes de qualquer encaminhamento.</p></li>
+        <li><span class="passos__icone"><svg class="icone" aria-hidden="true"><use href="#i-predio"/></svg></span><h3>Encaminhamos</h3><p>Os casos confirmados são levados à prefeitura, e o andamento fica visível para quem denunciou.</p></li>
+      </ul>
+    </section>
+
+    <section class="sobre-bloco">
+      <h2>Nossos compromissos</h2>
+      <ul class="compromissos">
+        <li><svg class="icone" aria-hidden="true"><use href="#i-olho"/></svg><div><h3>Transparência</h3><p>Os critérios de análise e o significado de cada status estão abertos a todos.</p></div></li>
+        <li><svg class="icone" aria-hidden="true"><use href="#i-escudo"/></svg><div><h3>Privacidade</h3><p>Seguimos a Lei Geral de Proteção de Dados e permitimos denúncias anônimas.</p></div></li>
+        <li><svg class="icone" aria-hidden="true"><use href="#i-coracao"/></svg><div><h3>Respeito a quem denuncia</h3><p>Cada registro é tratado com seriedade, do primeiro envio até a solução.</p></div></li>
+      </ul>
+    </section>
+
+    <section class="sobre-bloco">
+      <div class="chamada">
+        <p>Viu esgoto a céu aberto na sua rua? Registre agora.</p>
+        {% if user.is_authenticated %}
+          <a class="botao botao--primario" href="{% url 'nova_denuncia' %}">Fazer uma denúncia</a>
+        {% else %}
+          <a class="botao botao--primario" href="{% url 'cadastro' %}">Fazer uma denúncia</a>
+        {% endif %}
+      </div>
+    </section>
+  </main>
+{% endblock %}

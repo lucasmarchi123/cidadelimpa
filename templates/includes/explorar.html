@@ -1,0 +1,17 @@
+<details class="explorar">
+  <summary>Explorar<svg class="icone" aria-hidden="true"><use href="#i-abrir"/></svg></summary>
+  <div class="explorar__painel">
+    <a class="explorar__item" href="{% url 'lista_denuncias' %}">
+      <svg class="icone" aria-hidden="true"><use href="#i-pino"/></svg>
+      <strong>Denúncias</strong><span>Endereços com problemas registrados</span>
+    </a>
+    <a class="explorar__item" href="{% url 'inicio' %}#como-funciona">
+      <svg class="icone" aria-hidden="true"><use href="#i-ok"/></svg>
+      <strong>Como funciona</strong><span>Passo a passo, critérios e status</span>
+    </a>
+    <a class="explorar__item" href="{% url 'sobre' %}">
+      <svg class="icone" aria-hidden="true"><use href="#i-info"/></svg>
+      <strong>Sobre o projeto</strong><span>Por que o CidadeLimpa existe</span>
+    </a>
+  </div>
+</details>

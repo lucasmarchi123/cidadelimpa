@@ -6,7 +6,7 @@
         {% url 'lista_denuncias' as url_lista %}
         {% url 'nova_denuncia' as url_nova %}
         <div class="topo__links">
-          <a href="{{ url_lista }}"{% if request.resolver_match.url_name == 'lista_denuncias' or request.resolver_match.url_name == 'local' %} aria-current="page"{% endif %}>Explorar</a>
+          {% include "includes/explorar.html" %}
           <a class="botao botao--primario botao--pequeno" href="{{ url_nova }}"><svg class="icone" aria-hidden="true"><use href="#i-mais"/></svg>Denunciar</a>
         </div>
         <details class="conta">
@@ -20,7 +20,9 @@
               <strong>{{ user.nome_completo|default:user.username }}</strong>
               <span>@{{ user.username }}</span>
             </div>
-            <a class="so-movel" href="{{ url_lista }}">Explorar</a>
+            <a class="so-movel" href="{{ url_lista }}">Denúncias</a>
+            <a class="so-movel" href="{% url 'inicio' %}#como-funciona">Como funciona</a>
+            <a class="so-movel" href="{% url 'sobre' %}">Sobre o projeto</a>
             <a class="so-movel" href="{{ url_nova }}">Denunciar</a>
             <a href="{% url 'minhas_denuncias' %}">Minhas denúncias</a>
             <hr>
@@ -31,6 +33,7 @@
           </div>
         </details>
       {% else %}
+        {% include "includes/explorar.html" %}
         {% if request.resolver_match.url_name != 'login' %}
           <a href="{% url 'login' %}">Entrar</a>
         {% endif %}
