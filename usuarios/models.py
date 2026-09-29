@@ -14,3 +14,17 @@ class Usuario(AbstractUser):
 
     def __str__(self):
         return self.username
+
+    @property
+    def primeiro_nome(self):
+        """'Lucas Galvão Marchi' vira 'Lucas'."""
+        return (self.nome_completo or self.username).split()[0]
+
+    @property
+    def iniciais(self):
+        """'Lucas Galvão Marchi' vira 'LM'. Usado no círculo do menu da conta."""
+        partes = (self.nome_completo or self.username).split()
+        iniciais = partes[0][0]
+        if len(partes) > 1:
+            iniciais += partes[-1][0]
+        return iniciais.upper()

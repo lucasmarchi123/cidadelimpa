@@ -4,23 +4,25 @@
     <nav class="topo__nav" aria-label="Principal">
       {% if user.is_authenticated %}
         {% url 'lista_denuncias' as url_lista %}
-        {# O link de "Minhas denúncias" será ligado quando a página existir #}
+        {% url 'nova_denuncia' as url_nova %}
         <div class="topo__links">
-          <a href="{{ url_lista }}"{% if request.resolver_match.url_name == 'lista_denuncias' or request.resolver_match.url_name == 'local' %} aria-current="page"{% endif %}>Denúncias</a>
-          <a href="#">Minhas denúncias</a>
-          <a class="botao botao--primario botao--pequeno" href="{% url 'nova_denuncia' %}">Nova denúncia</a>
-          <span class="topo__usuario">Olá, {{ user.username }}</span>
-          <form method="post" action="{% url 'logout' %}">
-            {% csrf_token %}
-            <button class="botao botao--secundario botao--pequeno" type="submit">Sair</button>
-          </form>
+          <a href="{{ url_lista }}"{% if request.resolver_match.url_name == 'lista_denuncias' or request.resolver_match.url_name == 'local' %} aria-current="page"{% endif %}>Explorar</a>
+          <a class="botao botao--primario botao--pequeno" href="{{ url_nova }}"><svg class="icone" aria-hidden="true"><use href="#i-mais"/></svg>Denunciar</a>
         </div>
-        <details class="menu-movel">
-          <summary>Menu</summary>
+        <details class="conta">
+          <summary aria-label="Menu da conta">
+            <span class="conta__avatar" aria-hidden="true">{{ user.iniciais }}</span>
+            <span class="conta__nome">{{ user.primeiro_nome }}</span>
+            <svg class="icone" aria-hidden="true"><use href="#i-abrir"/></svg>
+          </summary>
           <div class="menu-movel__painel">
-            <a href="{{ url_lista }}">Denúncias</a>
-            <a href="#">Minhas denúncias</a>
-            <a href="{% url 'nova_denuncia' %}">Nova denúncia</a>
+            <div class="conta__cabecalho">
+              <strong>{{ user.nome_completo|default:user.username }}</strong>
+              <span>@{{ user.username }}</span>
+            </div>
+            <a class="so-movel" href="{{ url_lista }}">Explorar</a>
+            <a class="so-movel" href="{{ url_nova }}">Denunciar</a>
+            <a href="{% url 'minhas_denuncias' %}">Minhas denúncias</a>
             <hr>
             <form method="post" action="{% url 'logout' %}">
               {% csrf_token %}

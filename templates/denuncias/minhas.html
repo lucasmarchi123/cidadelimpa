@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+
+{% block titulo %}Minhas denúncias — CidadeLimpa{% endblock %}
+
+{% block conteudo %}
+  <main class="conteiner pagina">
+    <div class="pagina__cabecalho">
+      <h1>Minhas denúncias</h1>
+      <p>Acompanhe o andamento de cada denúncia que você registrou.</p>
+    </div>
+
+    {% if tem_denuncias %}
+      <nav class="filtros" aria-label="Filtrar por status">
+        {% for f in filtros %}
+          <a href="{% url 'minhas_denuncias' %}{% if f.valor %}?status={{ f.valor }}{% endif %}"{% if f.ativo %} aria-current="page"{% endif %}>
+            {{ f.rotulo }} <small>{{ f.total }}</small>
+          </a>
+        {% endfor %}
+      </nav>
+
+      {% if pagina.paginator.count %}
+        <div class="minhas">
+          {% for d in pagina %}
+            <article class="minha">
+              <div class="minha__foto">
+                <img src="{{ d.foto.url }}" alt="Foto da denúncia registrada em {{ d.data_registro|date:'d/m/Y' }}" loading="lazy">
+              </div>
+              <div class="minha__corpo">
+                <div class="minha__topo">
+                  <span class="minha__endereco">{{ d.local.logradouro }}, {{ d.local.numero }}</span>
+                  <span>{{ d.local.municipio }}</span>
+                </div>
+                <div class="minha__topo">
+                  <span>Registrada em {{ d.data_registro|date:"d/m/Y" }}</span>
+                  {% if d.anonima %}<span class="etiqueta">Anônima</span>{% endif %}
+                </div>
+                <p class="minha__texto">{{ d.descricao }}</p>
+
+                <ol class="andamento" aria-label="Andamento da denúncia">
+                  {% for h in d.andamento %}
+                    <li>
+                      <span class="status status--{{ h.status_novo|lower }}">{{ h.get_status_novo_display }}</span>
+                      <time datetime="{{ h.data_alteracao|date:'c' }}">{{ h.data_alteracao|date:"d/m" }}</time>
+                    </li>
+                  {% endfor %}
+                </ol>
+
+                {% if d.motivo %}
+                  <p class="observacao"><strong>Motivo informado pela equipe:</strong> {{ d.motivo }}</p>
+                {% endif %}
+
+                <div class="minha__acoes">
+                  {% if d.status != "REJEITADA" %}
+                    <a class="botao botao--secundario botao--pequeno" href="{% url 'local' d.local_id %}#denuncia-{{ d.pk }}">Ver endereço</a>
+                  {% endif %}
+
+                  {% if d.status == "ENVIADA" %}
+                    <details class="confirmar">
+                      <summary class="botao botao--texto-perigo botao--pequeno">Excluir</summary>
+                      <div class="confirmar__caixa">
+                        <p>Tem certeza? A denúncia deixa de aparecer para todos e não pode ser recuperada.</p>
+                        <form method="post" action="{% url 'excluir_denuncia' d.pk %}">
+                          {% csrf_token %}
+                          <button class="botao botao--perigo botao--pequeno" type="submit">Sim, excluir</button>
+                        </form>
+                      </div>
+                    </details>
+                  {% else %}
+                    <span class="campo__ajuda">Denúncias já analisadas não podem ser excluídas.</span>
+                  {% endif %}
+                </div>
+              </div>
+            </article>
+          {% endfor %}
+        </div>
+
+        {% if pagina.has_other_pages %}
+          <nav class="paginacao" aria-label="Páginas">
+            {% if pagina.has_previous %}
+              <a class="botao botao--secundario botao--pequeno" href="{% querystring pagina=pagina.previous_page_number %}">Página anterior</a>
+            {% endif %}
+            <span>Página {{ pagina.number }} de {{ pagina.paginator.num_pages }}</span>
+            {% if pagina.has_next %}
+              <a class="botao botao--secundario botao--pequeno" href="{% querystring pagina=pagina.next_page_number %}">Próxima página</a>
+            {% endif %}
+          </nav>
+        {% endif %}
+      {% else %}
+        <div class="vazio">
+          <h2>Nenhuma denúncia com este status</h2>
+          <a class="botao botao--secundario" href="{% url 'minhas_denuncias' %}">Ver todas</a>
+        </div>
+      {% endif %}
+
+    {% else %}
+      <div class="vazio">
+        <h2>Você ainda não registrou denúncias</h2>
+        <p>Quando registrar, você acompanha aqui cada etapa da análise.</p>
+        <a class="botao botao--primario" href="{% url 'nova_denuncia' %}">Fazer uma denúncia</a>
+      </div>
+    {% endif %}
+  </main>
+{% endblock %}

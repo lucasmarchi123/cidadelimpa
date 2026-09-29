@@ -8,10 +8,11 @@ from django.db.models import Count, Exists, Max, OuterRef, Prefetch, Q
 from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
+from django.utils import timezone
 from django.views.decorators.http import require_POST
 
 from .forms import DenunciaForm
-from .models import Curtida, Denuncia, Local, Municipio
+from .models import Curtida, Denuncia, HistoricoStatus, Local, Municipio
 from .utils import normalizar, normalizar_logradouro
 
 # Status que outros usuários podem ver. Rejeitadas ficam só no histórico do autor.
@@ -155,3 +156,74 @@ def nova(request):
         form = DenunciaForm(initial=dados_iniciais(request))
 
     return render(request, 'denuncias/nova.html', {'form': form})
+
+
+FILTROS_STATUS = [
+    ('', 'Todas'),
+    (Denuncia.Status.ENVIADA, 'Enviadas'),
+    (Denuncia.Status.ACEITA, 'Aceitas'),
+    (Denuncia.Status.RESOLVIDA, 'Resolvidas'),
+    (Denuncia.Status.REJEITADA, 'Rejeitadas'),
+]
+
+
+@login_required
+def minhas(request):
+    # A consulta parte SEMPRE do usuário logado: ninguém vê denúncias de outra pessoa aqui.
+    base = Denuncia.objects.filter(usuario=request.user, excluida=False)
+
+    contagem = {
+        linha['status']: linha['total']
+        for linha in base.order_by().values('status').annotate(total=Count('pk'))
+    }
+
+    status = request.GET.get('status', '')
+    if status not in Denuncia.Status.values:
+        status = ''
+
+    denuncias = base.filter(status=status) if status else base
+    denuncias = (
+        denuncias.select_related('local__municipio')
+        .prefetch_related(Prefetch(
+            'historico',
+            queryset=HistoricoStatus.objects.order_by('data_alteracao'),
+            to_attr='andamento',
+        ))
+        .order_by('-data_registro')
+    )
+
+    pagina = Paginator(denuncias, 10).get_page(request.GET.get('pagina'))
+    for d in pagina:
+        # Motivo da rejeição, se a equipe tiver escrito um
+        d.motivo = next(
+            (h.observacao for h in reversed(d.andamento)
+             if h.status_novo == Denuncia.Status.REJEITADA and h.observacao),
+            '',
+        )
+
+    filtros = [
+        {'valor': valor, 'rotulo': rotulo, 'ativo': valor == status,
+         'total': sum(contagem.values()) if not valor else contagem.get(valor, 0)}
+        for valor, rotulo in FILTROS_STATUS
+    ]
+    return render(request, 'denuncias/minhas.html', {
+        'pagina': pagina, 'filtros': filtros, 'status': status,
+        'tem_denuncias': bool(contagem),
+    })
+
+
+@login_required
+@require_POST
+def excluir(request, pk):
+    # Uma única operação que só funciona se TODAS as condições forem verdadeiras:
+    # a denúncia existe, é do usuário logado, não foi excluída e ainda não foi analisada.
+    agora = timezone.now()
+    excluidas = Denuncia.objects.filter(
+        pk=pk, usuario=request.user, excluida=False, status=Denuncia.Status.ENVIADA,
+    ).update(excluida=True, data_exclusao=agora, data_atualizacao=agora)
+
+    if excluidas:
+        messages.success(request, 'Denúncia excluída.')
+    else:
+        messages.error(request, 'Esta denúncia não pode ser excluída.')
+    return redirect('minhas_denuncias')
