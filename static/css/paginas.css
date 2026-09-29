@@ -166,6 +166,41 @@
 .paginacao { display: flex; justify-content: center; align-items: center; gap: 1rem; margin-top: 2.5rem; color: var(--tinta-suave); font-size: .95rem; }
 @media (prefers-reduced-motion: reduce) { .local-card { transition: none; } }
 
+/* Cartão do feed: o link cobre o cartão e o botão Curtir fica por cima dele */
+.local-card { position: relative; }
+.local-card__link { text-decoration: none; color: var(--tinta); }
+.local-card__link::after { content: ""; position: absolute; inset: 0; border-radius: var(--r-m); }
+.local-card__link:focus-visible { outline: none; }
+.local-card:has(.local-card__link:focus-visible) { outline: 3px solid var(--sol); outline-offset: 3px; }
+.local-card__info { display: grid; gap: .2rem; }
+.local-card__data { font-size: .85rem; color: var(--tinta-suave); }
+
+/* Rodapé: status e curtida lado a lado, na mesma altura */
+.local-card__rodape { position: relative; z-index: 1; display: flex; flex-wrap: wrap; justify-content: space-between;
+  align-items: center; gap: .6rem; padding-top: .8rem; border-top: 1px solid var(--linha); }
+.local-card__rodape form { margin: 0; }
+.local-card__rodape .status { height: 2.35rem; padding: 0 .85rem; border-radius: 8px; font-size: .9rem; }
+
+/* Botão Curtir com o número dentro: mesmo visual do botão secundário do site */
+.curtir { display: inline-flex; align-items: center; gap: .5rem; height: 2.35rem; padding: 0 .35rem 0 .85rem;
+  border: 2px solid var(--verde); border-radius: 8px; background: transparent; color: var(--link);
+  font: inherit; font-size: .92rem; font-weight: 650; line-height: 1; white-space: nowrap; cursor: pointer;
+  transition: background-color .15s, color .15s, border-color .15s; }
+.curtir .icone { width: 1.05rem; height: 1.05rem; }
+.curtir:hover { background: var(--menta); }
+.curtir__numero { display: inline-grid; place-items: center; min-width: 1.65rem; height: 1.65rem; padding: 0 .4rem;
+  border-radius: 6px; background: var(--menta); color: var(--tinta); font-weight: 800; font-size: .85rem; }
+.curtir--ativo { background: var(--menta); }
+.curtir--ativo .icone { color: var(--st-rejeitada); fill: currentColor; stroke: none; }
+.curtir--ativo .curtir__numero { background: var(--verde); color: #fff; }
+.curtir--fixo { cursor: default; border-style: dashed; border-color: var(--linha-forte); color: var(--tinta-suave); }
+.curtir--fixo:hover { background: transparent; }
+@media (prefers-reduced-motion: reduce) { .curtir { transition: none; } }
+
+/* Texto lido apenas por leitores de tela */
+.so-leitor { position: absolute !important; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+
 /* Página do endereço */
 .voltar { display: inline-flex; align-items: center; gap: .35rem; margin-bottom: 1.5rem; font-weight: 600; }
 .local-topo { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(1.5rem, 4vw, 3rem); align-items: start; }

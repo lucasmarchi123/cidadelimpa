@@ -32,18 +32,43 @@
       <div class="locais">
         {% for local in pagina %}
           {% with capa=local.visiveis.0 %}
-            <a class="local-card" href="{% url 'local' local.pk %}">
+            <article class="local-card" id="local-{{ local.pk }}">
               <div class="denuncia__foto"><img src="{{ capa.foto.url }}" alt="" loading="lazy"></div>
               {% include "denuncias/placa.html" with local=local compacta=True %}
-              <div class="local-card__linha">
-                <span class="local-card__cidade">{{ local.municipio }}</span>
+
+              <div class="local-card__info">
+                <div class="local-card__linha">
+                  {# Este link cobre o cartão inteiro: clicar em qualquer ponto abre o endereço #}
+                  <a class="local-card__link local-card__cidade" href="{% url 'local' local.pk %}">{{ local.municipio }}<span class="so-leitor">, abrir {{ local.logradouro }}, {{ local.bairro }}</span></a>
+                  <span>{{ local.total }} denúncia{{ local.total|pluralize }}</span>
+                </div>
+                <span class="local-card__data">Atualizado em {{ local.ultima|date:"d/m/Y" }}</span>
+              </div>
+
+              <div class="local-card__rodape">
                 <span class="status status--{{ capa.status|lower }}">{{ capa.get_status_display }}</span>
+
+                {# As curtidas se referem à denúncia mais recente, a da foto exibida #}
+                {% if capa.usuario_id != user.pk %}
+                  <form method="post" action="{% url 'curtir' capa.pk %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="next" value="{{ request.get_full_path }}#local-{{ local.pk }}">
+                    <button class="curtir{% if capa.curtiu %} curtir--ativo{% endif %}" type="submit"
+                            aria-pressed="{{ capa.curtiu|yesno:'true,false' }}">
+                      <svg class="icone" aria-hidden="true"><use href="#i-coracao"/></svg>
+                      <span>{% if capa.curtiu %}Curtido{% else %}Curtir{% endif %}</span>
+                      <span class="curtir__numero">{{ capa.n_curtidas }}<span class="so-leitor"> curtida{{ capa.n_curtidas|pluralize }}</span></span>
+                    </button>
+                  </form>
+                {% else %}
+                  <span class="curtir curtir--fixo" title="Sua denúncia">
+                    <svg class="icone" aria-hidden="true"><use href="#i-coracao"/></svg>
+                    <span>Sua denúncia</span>
+                    <span class="curtir__numero">{{ capa.n_curtidas }}<span class="so-leitor"> curtida{{ capa.n_curtidas|pluralize }}</span></span>
+                  </span>
+                {% endif %}
               </div>
-              <div class="local-card__linha">
-                <span>{{ local.total }} denúncia{{ local.total|pluralize }}</span>
-                <span>Atualizado em {{ local.ultima|date:"d/m/Y" }}</span>
-              </div>
-            </a>
+            </article>
           {% endwith %}
         {% endfor %}
       </div>

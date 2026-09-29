@@ -56,15 +56,20 @@
               {% if d.usuario_id != user.pk %}
                 <form method="post" action="{% url 'curtir' d.pk %}">
                   {% csrf_token %}
-                  <button class="botao botao--secundario botao--pequeno{% if d.curtiu %} botao--curtido{% endif %}"
-                          type="submit" aria-pressed="{{ d.curtiu|yesno:'true,false' }}">
-                    <svg class="icone" aria-hidden="true"><use href="#i-coracao"/></svg>{% if d.curtiu %}Curtido{% else %}Curtir{% endif %}
+                  <button class="curtir{% if d.curtiu %} curtir--ativo{% endif %}" type="submit"
+                          aria-pressed="{{ d.curtiu|yesno:'true,false' }}">
+                    <svg class="icone" aria-hidden="true"><use href="#i-coracao"/></svg>
+                    <span>{% if d.curtiu %}Curtido{% else %}Curtir{% endif %}</span>
+                    <span class="curtir__numero">{{ d.n_curtidas }}<span class="so-leitor"> curtida{{ d.n_curtidas|pluralize }}</span></span>
                   </button>
                 </form>
               {% else %}
-                <span class="registro__autor">Sua denúncia</span>
+                <span class="curtir curtir--fixo" title="Sua denúncia">
+                  <svg class="icone" aria-hidden="true"><use href="#i-coracao"/></svg>
+                  <span>Sua denúncia</span>
+                  <span class="curtir__numero">{{ d.n_curtidas }}<span class="so-leitor"> curtida{{ d.n_curtidas|pluralize }}</span></span>
+                </span>
               {% endif %}
-              <span>{{ d.n_curtidas }} curtida{{ d.n_curtidas|pluralize }}</span>
             </div>
           </div>
         </article>

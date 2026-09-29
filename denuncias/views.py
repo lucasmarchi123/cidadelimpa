@@ -9,6 +9,7 @@ from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.utils import timezone
+from django.utils.http import url_has_allowed_host_and_scheme
 from django.views.decorators.http import require_POST
 
 from .forms import DenunciaForm
@@ -72,9 +73,14 @@ def lista(request):
         locais = locais.filter(pk__in=ids)
 
     # Carrega de uma vez as denúncias visíveis de cada endereço da página
+    # Cada denúncia visível já vem com a contagem de curtidas e com a informação
+    # de que o usuário logado curtiu ou não, tudo numa consulta só.
     locais = locais.prefetch_related(Prefetch(
         'denuncias',
-        queryset=denuncias_visiveis().order_by('-data_registro'),
+        queryset=denuncias_visiveis().annotate(
+            n_curtidas=Count('curtidas'),
+            curtiu=Exists(Curtida.objects.filter(denuncia=OuterRef('pk'), usuario=request.user)),
+        ).order_by('-data_registro'),
         to_attr='visiveis',
     ))
 
@@ -114,6 +120,21 @@ def local(request, pk):
     })
 
 
+def destino_seguro(request, padrao):
+    """Para onde voltar depois de curtir.
+
+    O formulário do feed envia a página onde a pessoa estava (com a busca e a
+    paginação). O Django só aceita endereços do próprio site: se alguém
+    trocar esse valor por um link externo, ele é ignorado.
+    """
+    destino = request.POST.get('next', '')
+    if destino and url_has_allowed_host_and_scheme(
+        destino, allowed_hosts={request.get_host()}, require_https=request.is_secure(),
+    ):
+        return destino
+    return padrao
+
+
 @login_required
 @require_POST
 def curtir(request, pk):
@@ -124,7 +145,8 @@ def curtir(request, pk):
         curtida, criada = Curtida.objects.get_or_create(denuncia=denuncia, usuario=request.user)
         if not criada:
             curtida.delete()   # segundo clique desfaz a curtida
-    return redirect(f"{reverse('local', args=[denuncia.local_id])}#denuncia-{denuncia.pk}")
+    padrao = f"{reverse('local', args=[denuncia.local_id])}#denuncia-{denuncia.pk}"
+    return redirect(destino_seguro(request, padrao))
 
 
 def dados_iniciais(request):

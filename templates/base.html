@@ -7,10 +7,11 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,300..800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="{% static 'css/tokens.css' %}">
-  <link rel="stylesheet" href="{% static 'css/base.css' %}">
-  <link rel="stylesheet" href="{% static 'css/componentes.css' %}">
-  <link rel="stylesheet" href="{% static 'css/paginas.css' %}">
+  {# O ?v= força o navegador a baixar o CSS de novo. Mude o número sempre que alterar algum CSS. #}
+  <link rel="stylesheet" href="{% static 'css/tokens.css' %}?v=20260930">
+  <link rel="stylesheet" href="{% static 'css/base.css' %}?v=20260930">
+  <link rel="stylesheet" href="{% static 'css/componentes.css' %}?v=20260930">
+  <link rel="stylesheet" href="{% static 'css/paginas.css' %}?v=20260930">
 </head>
 <body>
   {% include "includes/icones.html" %}
