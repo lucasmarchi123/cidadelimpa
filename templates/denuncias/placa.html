@@ -1,0 +1,5 @@
+<div class="placa{% if compacta %} placa--compacta{% endif %}" role="img" aria-label="{{ local.logradouro }}, bairro {{ local.bairro }}">
+  <span class="placa__bairro">{{ local.bairro }}</span>
+  <span class="placa__rua">{{ local.logradouro }}</span>
+  {% if local.cep %}<span class="placa__cep">CEP {{ local.cep_formatado }}</span>{% endif %}
+</div>

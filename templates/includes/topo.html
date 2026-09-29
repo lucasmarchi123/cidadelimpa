@@ -3,9 +3,10 @@
     <a class="marca" href="{% url 'inicio' %}"><svg aria-hidden="true"><use href="#logo"/></svg>CidadeLimpa</a>
     <nav class="topo__nav" aria-label="Principal">
       {% if user.is_authenticated %}
-        {# Os links do feed e de "Minhas denúncias" serão ligados quando essas páginas existirem #}
+        {% url 'lista_denuncias' as url_lista %}
+        {# O link de "Minhas denúncias" será ligado quando a página existir #}
         <div class="topo__links">
-          <a href="#">Denúncias</a>
+          <a href="{{ url_lista }}"{% if request.resolver_match.url_name == 'lista_denuncias' or request.resolver_match.url_name == 'local' %} aria-current="page"{% endif %}>Denúncias</a>
           <a href="#">Minhas denúncias</a>
           <a class="botao botao--primario botao--pequeno" href="{% url 'nova_denuncia' %}">Nova denúncia</a>
           <span class="topo__usuario">Olá, {{ user.username }}</span>
@@ -17,7 +18,7 @@
         <details class="menu-movel">
           <summary>Menu</summary>
           <div class="menu-movel__painel">
-            <a href="#">Denúncias</a>
+            <a href="{{ url_lista }}">Denúncias</a>
             <a href="#">Minhas denúncias</a>
             <a href="{% url 'nova_denuncia' %}">Nova denúncia</a>
             <hr>

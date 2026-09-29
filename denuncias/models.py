@@ -45,6 +45,22 @@ class Local(models.Model):
     def __str__(self):
         return f'{self.logradouro}, {self.numero} - {self.bairro}'
 
+    @property
+    def cep_formatado(self):
+        """59030000 vira 59030-000."""
+        if len(self.cep) == 8:
+            return f'{self.cep[:5]}-{self.cep[5:]}'
+        return self.cep
+
+    @property
+    def endereco_completo(self):
+        """Endereço em uma linha, no formato que o Google Maps entende."""
+        partes = [self.logradouro]
+        if self.numero and self.numero != 'S/N':
+            partes.append(self.numero)
+        partes += [self.bairro, self.municipio.nome, self.municipio.uf, 'Brasil']
+        return ', '.join(partes)
+
 
 class Denuncia(models.Model):
 
@@ -83,6 +99,22 @@ class Denuncia(models.Model):
 
     def __str__(self):
         return f'Denúncia #{self.pk} - {self.get_status_display()}'
+
+    @property
+    def autor_publico(self):
+        """Nome do autor como aparece para os outros usuários.
+
+        Denúncia anônima: 'Anônimo'. As demais mostram só o primeiro nome
+        e a inicial do último ('Maria S.'), para não expor o nome completo.
+        Os templates públicos devem usar SEMPRE este campo, nunca o usuario.
+        """
+        if self.anonima:
+            return 'Anônimo'
+        partes = (self.usuario.nome_completo or self.usuario.username).split()
+        if len(partes) > 1:
+            return f'{partes[0]} {partes[-1][0]}.'
+        return partes[0]
+
 
 class Curtida(models.Model):
     denuncia = models.ForeignKey(
@@ -156,5 +188,4 @@ class LogAdmin(models.Model):
         ordering = ['-data_hora']
 
     def __str__(self):
-        return f'{self.get_acao_display()} em {self.data_hora:%d/%m/%Y %H:%M}'    
-
+        return f'{self.get_acao_display()} em {self.data_hora:%d/%m/%Y %H:%M}'

@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+
+{% block titulo %}{{ local.logradouro }} — CidadeLimpa{% endblock %}
+
+{% block conteudo %}
+  <main class="conteiner pagina">
+    <a class="voltar" href="{% url 'lista_denuncias' %}"><svg class="icone" aria-hidden="true"><use href="#i-voltar"/></svg>Voltar para denúncias</a>
+
+    <div class="local-topo">
+      <div class="local-info">
+        {% include "denuncias/placa.html" with local=local %}
+        <p class="local-info__endereco">
+          {% if local.numero != "S/N" %}Número {{ local.numero }}{% else %}Sem número{% endif %}, {{ local.bairro }}, {{ local.municipio }}
+        </p>
+        {% if local.ponto_referencia %}
+          <p class="local-info__referencia">Ponto de referência: {{ local.ponto_referencia }}</p>
+        {% endif %}
+        <div class="numeros">
+          <span>Situação atual <span class="status status--{{ situacao.status|lower }}">{{ situacao.get_status_display }}</span></span>
+          <span><strong>{{ denuncias|length }}</strong> denúncia{{ denuncias|length|pluralize }}</span>
+          <span><strong>{{ total_curtidas }}</strong> curtida{{ total_curtidas|pluralize }}</span>
+        </div>
+      </div>
+      <div class="mapa">
+        {% if mapa_url %}
+          <img src="{{ mapa_url }}" alt="Mapa com a localização de {{ local.logradouro }}" loading="lazy">
+        {% else %}
+          <svg viewBox="0 0 640 400" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Ilustração de mapa"><use href="#mapa-ilustrado"/></svg>
+        {% endif %}
+      </div>
+    </div>
+
+    <section class="historico-local" aria-labelledby="hist-titulo">
+      <h2 id="hist-titulo">Histórico deste endereço</h2>
+
+      {% for d in denuncias %}
+        <article class="registro" id="denuncia-{{ d.pk }}">
+          <div class="registro__foto">
+            <img src="{{ d.foto.url }}" alt="Foto da denúncia registrada em {{ d.data_registro|date:'d/m/Y' }}" loading="lazy">
+          </div>
+          <div class="registro__corpo">
+            <div class="registro__topo">
+              <span class="status status--{{ d.status|lower }}">{{ d.get_status_display }}</span>
+              {# Nunca exibir d.usuario aqui: o nome público vem sempre do autor_publico #}
+              <span class="registro__autor">{{ d.autor_publico }}</span>
+              <span>{{ d.data_registro|date:"d/m/Y" }}</span>
+            </div>
+            <p>{{ d.descricao|linebreaksbr }}</p>
+            {% if d.encaminhada_orgao or d.data_ocorrencia %}
+              <p class="registro__nota">
+                {% if d.encaminhada_orgao %}Encaminhada à prefeitura{% if d.data_encaminhamento %} em {{ d.data_encaminhamento|date:"d/m/Y" }}{% endif %}.{% endif %}
+                {% if d.data_ocorrencia %}Problema percebido em {{ d.data_ocorrencia|date:"d/m/Y" }}.{% endif %}
+              </p>
+            {% endif %}
+            <div class="registro__rodape">
+              {% if d.usuario_id != user.pk %}
+                <form method="post" action="{% url 'curtir' d.pk %}">
+                  {% csrf_token %}
+                  <button class="botao botao--secundario botao--pequeno{% if d.curtiu %} botao--curtido{% endif %}"
+                          type="submit" aria-pressed="{{ d.curtiu|yesno:'true,false' }}">
+                    <svg class="icone" aria-hidden="true"><use href="#i-coracao"/></svg>{% if d.curtiu %}Curtido{% else %}Curtir{% endif %}
+                  </button>
+                </form>
+              {% else %}
+                <span class="registro__autor">Sua denúncia</span>
+              {% endif %}
+              <span>{{ d.n_curtidas }} curtida{{ d.n_curtidas|pluralize }}</span>
+            </div>
+          </div>
+        </article>
+      {% endfor %}
+
+      <div class="chamada">
+        <p>Também viu esse problema? Registre uma nova denúncia neste endereço.</p>
+        <a class="botao botao--primario" href="{% url 'nova_denuncia' %}?local={{ local.pk }}">Registrar denúncia aqui</a>
+      </div>
+    </section>
+  </main>
+{% endblock %}

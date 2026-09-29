@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+
+{% block titulo %}Denúncias — CidadeLimpa{% endblock %}
+
+{% block conteudo %}
+  <main class="conteiner pagina">
+    <div class="pagina__cabecalho">
+      <h1>Denúncias</h1>
+      <p>Endereços com denúncias registradas pelos moradores. Cada local reúne todos os registros feitos nele.</p>
+    </div>
+
+    <form class="busca" role="search" method="get" action="{% url 'lista_denuncias' %}">
+      <div class="campo">
+        <label for="f-busca">Buscar por rua ou bairro</label>
+        <input id="f-busca" name="busca" type="search" value="{{ busca }}" maxlength="100" placeholder="Ex.: Rua das Flores">
+      </div>
+      <div class="campo">
+        <label for="f-municipio">Município</label>
+        <select id="f-municipio" name="municipio">
+          <option value="">Todos os municípios</option>
+          {% for m in municipios %}
+            <option value="{{ m.pk }}"{% if m.pk|stringformat:"s" == municipio_id %} selected{% endif %}>{{ m.nome }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <button class="botao botao--primario" type="submit"><svg class="icone" aria-hidden="true"><use href="#i-lupa"/></svg>Buscar</button>
+    </form>
+
+    {% if pagina.paginator.count %}
+      <p class="resultado">{{ pagina.paginator.count }} endereço{{ pagina.paginator.count|pluralize }} encontrado{{ pagina.paginator.count|pluralize }}</p>
+
+      <div class="locais">
+        {% for local in pagina %}
+          {% with capa=local.visiveis.0 %}
+            <a class="local-card" href="{% url 'local' local.pk %}">
+              <div class="denuncia__foto"><img src="{{ capa.foto.url }}" alt="" loading="lazy"></div>
+              {% include "denuncias/placa.html" with local=local compacta=True %}
+              <div class="local-card__linha">
+                <span class="local-card__cidade">{{ local.municipio }}</span>
+                <span class="status status--{{ capa.status|lower }}">{{ capa.get_status_display }}</span>
+              </div>
+              <div class="local-card__linha">
+                <span>{{ local.total }} denúncia{{ local.total|pluralize }}</span>
+                <span>Atualizado em {{ local.ultima|date:"d/m/Y" }}</span>
+              </div>
+            </a>
+          {% endwith %}
+        {% endfor %}
+      </div>
+
+      {% if pagina.has_other_pages %}
+        <nav class="paginacao" aria-label="Páginas">
+          {% if pagina.has_previous %}
+            <a class="botao botao--secundario botao--pequeno" href="{% querystring pagina=pagina.previous_page_number %}">Página anterior</a>
+          {% endif %}
+          <span>Página {{ pagina.number }} de {{ pagina.paginator.num_pages }}</span>
+          {% if pagina.has_next %}
+            <a class="botao botao--secundario botao--pequeno" href="{% querystring pagina=pagina.next_page_number %}">Próxima página</a>
+          {% endif %}
+        </nav>
+      {% endif %}
+
+    {% elif filtrando %}
+      <div class="vazio">
+        <h2>Nenhum endereço encontrado</h2>
+        <p>Tente buscar por outro nome de rua ou bairro, ou escolha outro município.</p>
+        <a class="botao botao--secundario" href="{% url 'lista_denuncias' %}">Limpar busca</a>
+      </div>
+    {% else %}
+      <div class="vazio">
+        <h2>Ainda não há denúncias</h2>
+        <p>Seja a primeira pessoa a registrar um problema de esgoto na sua cidade.</p>
+        <a class="botao botao--primario" href="{% url 'nova_denuncia' %}">Fazer uma denúncia</a>
+      </div>
+    {% endif %}
+  </main>
+{% endblock %}

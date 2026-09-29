@@ -148,6 +148,65 @@
 }
 @media (max-width: 32rem) { .etapa__linha { grid-template-columns: 1fr; } }
 
+/* Feed de endereços */
+.pagina { padding-block: clamp(2rem, 5vw, 3.5rem); }
+.pagina__cabecalho { display: grid; gap: .6rem; margin-bottom: 1.75rem; }
+.pagina__cabecalho p { color: var(--tinta-suave); font-size: 1.1rem; }
+.busca { display: grid; grid-template-columns: minmax(0, 1fr) 15rem auto; gap: .9rem; align-items: end;
+  padding: 1.2rem; margin-bottom: 1.5rem; border-radius: var(--r-g); background: var(--menta); }
+.busca input, .busca select, .busca .botao { height: 3.05rem; }
+.busca input[type="search"] { -webkit-appearance: none; appearance: none; }
+.resultado { margin-bottom: 1rem; color: var(--tinta-suave); font-size: .95rem; }
+.locais { display: grid; grid-template-columns: repeat(auto-fill, minmax(17rem, 1fr)); gap: 1.25rem; }
+.local-card { display: grid; gap: .8rem; align-content: start; padding: .9rem; color: inherit; text-decoration: none;
+  background: var(--papel); border: 1px solid var(--linha); border-radius: var(--r-m); transition: border-color .15s, box-shadow .15s; }
+.local-card:hover { border-color: var(--verde); box-shadow: 0 12px 24px -18px rgba(10, 50, 28, .5); }
+.local-card__linha { display: flex; justify-content: space-between; align-items: center; gap: .6rem; font-size: .9rem; color: var(--tinta-suave); }
+.local-card__cidade { font-weight: 600; color: var(--tinta); }
+.paginacao { display: flex; justify-content: center; align-items: center; gap: 1rem; margin-top: 2.5rem; color: var(--tinta-suave); font-size: .95rem; }
+@media (prefers-reduced-motion: reduce) { .local-card { transition: none; } }
+
+/* Página do endereço */
+.voltar { display: inline-flex; align-items: center; gap: .35rem; margin-bottom: 1.5rem; font-weight: 600; }
+.local-topo { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(1.5rem, 4vw, 3rem); align-items: start; }
+.local-info { display: grid; gap: 1.1rem; }
+.local-info__endereco { font-size: 1.1rem; }
+.local-info__referencia { color: var(--tinta-suave); }
+.numeros { display: flex; flex-wrap: wrap; gap: .6rem; }
+.numeros span { padding: .55rem .9rem; border-radius: var(--r-p); background: var(--menta); font-size: .95rem; }
+.numeros strong { font-size: 1.1rem; }
+.mapa { overflow: hidden; border-radius: var(--r-g); border: 1px solid var(--linha); aspect-ratio: 16 / 10; background: var(--menta); }
+.mapa svg, .mapa img { width: 100%; height: 100%; object-fit: cover; }
+
+.historico-local { margin-top: clamp(2.5rem, 6vw, 4rem); display: grid; gap: 1.25rem; }
+.registro { display: grid; grid-template-columns: 15rem minmax(0, 1fr); gap: 1.25rem; padding: 1rem;
+  background: var(--papel); border: 1px solid var(--linha); border-radius: var(--r-m); }
+.registro__foto { border-radius: var(--r-p); overflow: hidden; aspect-ratio: 4 / 3; }
+.registro__foto svg { width: 100%; height: 100%; }
+.registro__corpo { display: grid; gap: .7rem; align-content: start; }
+.registro__topo { display: flex; flex-wrap: wrap; align-items: center; gap: .4rem .9rem; font-size: .92rem; color: var(--tinta-suave); }
+.registro__autor { font-weight: 650; color: var(--tinta); }
+.registro__nota { font-size: .92rem; color: var(--tinta-suave); }
+.registro__rodape { display: flex; align-items: center; gap: .8rem; padding-top: .7rem; border-top: 1px solid var(--linha);
+  font-size: .92rem; color: var(--tinta-suave); }
+.botao--curtido { background: var(--menta); }
+.botao--curtido .icone { color: var(--st-rejeitada); fill: currentColor; stroke: none; }
+
+.chamada { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 1rem;
+  padding: 1.4rem 1.6rem; border-radius: var(--r-g); background: var(--menta); }
+.chamada p { font-weight: 600; font-size: 1.05rem; }
+
+@media (max-width: 52rem) {
+  .busca, .local-topo { grid-template-columns: 1fr; }
+  .registro { grid-template-columns: 1fr; }
+}
+
+
+.denuncia__foto img, .registro__foto img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.vazio { display: grid; gap: .6rem; justify-items: center; text-align: center; padding: 2.5rem 1.5rem;
+  border: 1.5px dashed var(--linha-forte); border-radius: var(--r-g); }
+.vazio p { color: var(--tinta-suave); }
+
 /* Responsivo */
 @media (max-width: 60rem) {
   .passos { grid-template-columns: repeat(2, minmax(0, 1fr)); }
