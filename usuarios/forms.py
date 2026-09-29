@@ -18,12 +18,11 @@ class CadastroForm(UserCreationForm):
         model = Usuario
         # Só estes campos podem vir do formulário. Campos como is_staff
         # ficam de fora, então ninguém consegue se cadastrar como administrador.
-        fields = ('nome_completo', 'username', 'email', 'telefone')
+        fields = ('nome_completo', 'username', 'email')
         labels = {
             'nome_completo': 'Nome completo',
             'username': 'Nome de usuário',
             'email': 'E-mail',
-            'telefone': 'Telefone',
         }
         help_texts = {
             'username': 'É com ele que você vai entrar no sistema. '
@@ -32,10 +31,6 @@ class CadastroForm(UserCreationForm):
         widgets = {
             'nome_completo': forms.TextInput(attrs={'autocomplete': 'name', 'autofocus': True}),
             'email': forms.EmailInput(attrs={'autocomplete': 'email'}),
-            'telefone': forms.TextInput(attrs={
-                'type': 'tel', 'autocomplete': 'tel', 'inputmode': 'tel',
-                'placeholder': '(84) 99999-0000',
-            }),
         }
 
     def __init__(self, *args, **kwargs):

@@ -8,12 +8,12 @@ from .models import Usuario
 class UsuarioAdmin(UserAdmin):
     fieldsets = UserAdmin.fieldsets + (
         ('Dados do CidadeLimpa', {
-            'fields': ('nome_completo', 'telefone', 'data_aceite_termos'),
+            'fields': ('nome_completo', 'data_aceite_termos'),
         }),
     )
     add_fieldsets = UserAdmin.add_fieldsets + (
         ('Dados do CidadeLimpa', {
-            'fields': ('email', 'nome_completo', 'telefone'),
+            'fields': ('email', 'nome_completo'),
         }),
     )
     list_display = ('username', 'nome_completo', 'email', 'is_staff', 'is_active')

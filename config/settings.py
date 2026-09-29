@@ -141,3 +141,5 @@ PASSWORD_RESET_TIMEOUT = 60 * 60
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+
+EMAIL_CONTATO = 'projetocidadelimpa@gmail.com'

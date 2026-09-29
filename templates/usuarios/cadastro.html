@@ -31,10 +31,7 @@
         {% include "includes/campo.html" with campo=form.nome_completo %}
         {% include "includes/campo.html" with campo=form.username %}
 
-        <div class="acesso__dupla">
-          {% include "includes/campo.html" with campo=form.email %}
-          {% include "includes/campo.html" with campo=form.telefone %}
-        </div>
+        {% include "includes/campo.html" with campo=form.email %}
 
         {% include "includes/campo.html" with campo=form.password1 %}
         {% include "includes/campo.html" with campo=form.password2 %}
@@ -42,7 +39,7 @@
         <div class="caixa-campo">
           <label class="caixa">
             {{ form.aceite_termos }}
-            <span>Li e aceito os <a href="#">Termos de uso</a> e a <a href="#">Política de privacidade</a>.</span>
+            <span>Li e aceito os <a href="{% url 'termos' %}" target="_blank" rel="noopener">Termos de uso</a> e a <a href="{% url 'privacidade' %}" target="_blank" rel="noopener">Política de privacidade</a>.</span>
           </label>
           {% for erro in form.aceite_termos.errors %}<span class="campo__erro">{{ erro }}</span>{% endfor %}
         </div>

@@ -63,7 +63,7 @@
     <div class="analise__coluna">
       <section class="bloco-painel">
         <h2>Autor</h2>
-        {# Dados mínimos para a análise: sem e-mail nem telefone #}
+        {# Dados mínimos para a análise: o e-mail não aparece aqui #}
         <dl class="dados">
           <div><dt>Nome</dt><dd>{{ d.usuario.nome_completo|default:"—" }}</dd></div>
           <div><dt>Usuário</dt><dd>@{{ d.usuario.username }}{% if not d.usuario.is_active %} <span class="situacao situacao--bloqueado">Bloqueado</span>{% endif %}</dd></div>
