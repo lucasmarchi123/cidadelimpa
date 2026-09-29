@@ -1,8 +1,38 @@
 from django import forms
-from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
+from django.core.exceptions import ValidationError
 from django.utils import timezone
 
 from .models import Usuario
+from .seguranca import esta_bloqueado, limpar_falhas, registrar_falha
+
+MENSAGEM_LOGIN_INVALIDO = 'Nome de usuário ou senha incorretos. Verifique os dados e tente novamente.'
+
+
+class LoginForm(AuthenticationForm):
+    error_messages = {
+        'invalid_login': MENSAGEM_LOGIN_INVALIDO,
+        # Conta bloqueada recebe a mesma mensagem: não revelamos que a conta existe
+        'inactive': MENSAGEM_LOGIN_INVALIDO,
+        'bloqueado': 'Muitas tentativas sem sucesso. Por segurança, aguarde 15 minutos e tente novamente.',
+    }
+
+    def clean(self):
+        username = self.cleaned_data.get('username', '')
+        ip = self.request.META.get('REMOTE_ADDR', '') if self.request else ''
+
+        # Confere o bloqueio ANTES de testar a senha
+        if esta_bloqueado(username, ip):
+            raise ValidationError(self.error_messages['bloqueado'], code='bloqueado')
+
+        try:
+            dados = super().clean()
+        except ValidationError:
+            registrar_falha(username, ip)
+            raise
+
+        limpar_falhas(username, ip)
+        return dados
 
 
 class CadastroForm(UserCreationForm):

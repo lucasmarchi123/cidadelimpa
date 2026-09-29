@@ -9,23 +9,26 @@ https://docs.djangoproject.com/en/6.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.1/ref/settings/
 """
-
+import os
 from pathlib import Path
+
+from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+load_dotenv(BASE_DIR / '.env')
 
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/6.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-5dqe6vhpay%@uo3ylt++1^e&78s0tdf@!h&_(r*wv1(iuibx@_'
-
+SECRET_KEY = os.environ['DJANGO_SECRET_KEY']
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get('DJANGO_DEBUG', 'False') == 'True'
 
-ALLOWED_HOSTS = []
+
+ALLOWED_HOSTS = os.environ.get('DJANGO_ALLOWED_HOSTS', '127.0.0.1,localhost').split(',')
 
 
 # Application definition
@@ -142,4 +145,57 @@ PASSWORD_RESET_TIMEOUT = 60 * 60
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
-EMAIL_CONTATO = 'projetocidadelimpa@gmail.com'
+EMAIL_CONTATO = os.environ.get('EMAIL_CONTATO', '')
+GOOGLE_MAPS_API_KEY = os.environ.get('GOOGLE_MAPS_API_KEY', '')
+
+# ---------------------------------------------------------------
+# Segurança
+# ---------------------------------------------------------------
+SESSION_COOKIE_HTTPONLY = True
+SESSION_COOKIE_AGE = 60 * 60 * 24 * 7
+SECURE_CONTENT_TYPE_NOSNIFF = True
+X_FRAME_OPTIONS = 'DENY'
+SECURE_REFERRER_POLICY = 'same-origin'
+
+if not DEBUG:
+    SECURE_SSL_REDIRECT = True
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    SECURE_HSTS_SECONDS = 60 * 60 * 24 * 30
+
+    # ---------------------------------------------------------------
+# Registro de erros
+# ---------------------------------------------------------------
+(BASE_DIR / 'logs').mkdir(exist_ok=True)
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'filters': {
+        'so_em_desenvolvimento': {'()': 'django.utils.log.RequireDebugTrue'},
+    },
+    'formatters': {
+        'detalhado': {'format': '{asctime} | {levelname} | {name} | {message}', 'style': '{'},
+    },
+    'handlers': {
+        'arquivo': {
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': BASE_DIR / 'logs' / 'erros.log',
+            'maxBytes': 5 * 1024 * 1024,
+            'backupCount': 5,
+            'encoding': 'utf-8',
+            'formatter': 'detalhado',
+            'level': 'WARNING',
+        },
+        'console': {
+            'class': 'logging.StreamHandler',
+            'filters': ['so_em_desenvolvimento'],
+            'level': 'INFO',
+        },
+    },
+    'loggers': {
+        'django': {'handlers': ['console', 'arquivo'], 'level': 'INFO'},
+        'cidadelimpa': {'handlers': ['console', 'arquivo'], 'level': 'INFO'},
+    },
+}
+
