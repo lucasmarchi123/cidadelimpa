@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block titulo %}Página não encontrada — CidadeLimpa{% endblock %}
+
+{% block conteudo %}
+  <main class="conteiner acesso acesso--simples">
+    <div class="acesso__painel">
+      <span class="selo" aria-hidden="true"><svg class="icone"><use href="#i-alerta"/></svg></span>
+      <h1>Página não encontrada</h1>
+      <p>O endereço que você tentou abrir não existe ou não está mais disponível.</p>
+      <a class="botao botao--primario" href="{% url 'inicio' %}">Voltar ao início</a>
+    </div>
+  </main>
+{% endblock %}

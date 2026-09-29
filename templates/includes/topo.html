@@ -25,6 +25,7 @@
             <a class="so-movel" href="{% url 'sobre' %}">Sobre o projeto</a>
             <a class="so-movel" href="{{ url_nova }}">Denunciar</a>
             <a href="{% url 'minhas_denuncias' %}">Minhas denúncias</a>
+            {% if user.is_staff %}<a href="{% url 'painel' %}">Painel administrativo</a>{% endif %}
             <hr>
             <form method="post" action="{% url 'logout' %}">
               {% csrf_token %}

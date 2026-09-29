@@ -1,0 +1,143 @@
+{% extends "painel/base_painel.html" %}
+
+{% block titulo %}Denúncia nº {{ d.pk }} — Painel CidadeLimpa{% endblock %}
+
+{% block painel %}
+  <a class="voltar" href="{% url 'painel_denuncias' %}"><svg class="icone" aria-hidden="true"><use href="#i-voltar"/></svg>Voltar para a fila</a>
+
+  <div class="analise__titulo">
+    <h1>Denúncia nº {{ d.pk }}</h1>
+    <span class="status status--{{ d.status|lower }}">{{ d.get_status_display }}</span>
+    <p>
+      Registrada em {{ d.data_registro|date:"d/m/Y \à\s H:i" }}{% if d.status == "ENVIADA" %}, aguardando há {{ espera }} dia{{ espera|pluralize }}{% endif %}.
+      {% if d.encaminhada_orgao %}Encaminhada à prefeitura em {{ d.data_encaminhamento|date:"d/m/Y" }}.{% endif %}
+    </p>
+  </div>
+
+  <div class="analise">
+    <div class="analise__coluna">
+      <div class="analise__foto">
+        <a href="{{ d.foto.url }}" target="_blank" rel="noopener" title="Abrir a foto em tamanho original">
+          <img src="{{ d.foto.url }}" alt="Foto enviada na denúncia nº {{ d.pk }}">
+        </a>
+      </div>
+
+      <section class="bloco-painel">
+        <h2>Descrição</h2>
+        <p>{{ d.descricao|linebreaksbr }}</p>
+        {% if d.data_ocorrencia %}
+          <dl class="dados"><div><dt>Problema percebido em</dt><dd>{{ d.data_ocorrencia|date:"d/m/Y" }}</dd></div></dl>
+        {% endif %}
+      </section>
+
+      <section class="bloco-painel">
+        <h2>Local</h2>
+        {% include "denuncias/placa.html" with local=d.local compacta=True %}
+        <dl class="dados">
+          <div><dt>Endereço</dt><dd>{% if d.local.numero != "S/N" %}Número {{ d.local.numero }}{% else %}Sem número{% endif %}, {{ d.local.bairro }}, {{ d.local.municipio }}</dd></div>
+          {% if d.local.ponto_referencia %}<div><dt>Ponto de referência</dt><dd>{{ d.local.ponto_referencia }}</dd></div>{% endif %}
+          <div><dt>Outras denúncias neste endereço</dt><dd>
+            {% if outras_total %}{{ outras_total }}, a mais recente {{ outra_recente.get_status_display|lower }} em {{ outra_recente.data_registro|date:"d/m/Y" }}{% else %}Nenhuma{% endif %}
+          </dd></div>
+        </dl>
+        {% if d.status != "REJEITADA" %}<a href="{% url 'local' d.local_id %}">Abrir a página do endereço</a>{% endif %}
+      </section>
+
+      <section class="bloco-painel">
+        <h2>Histórico</h2>
+        <ol class="linha-tempo linha-tempo--painel">
+          {% for h in historico %}
+            <li>
+              <time datetime="{{ h.data_alteracao|date:'c' }}">{{ h.data_alteracao|date:"d/m/Y H:i" }}</time>
+              <span>
+                {% if h.status_anterior %}{{ h.get_status_anterior_display }} → {{ h.get_status_novo_display }}{% else %}Denúncia registrada{% endif %}
+                <small>{% if h.usuario_responsavel %}Por {{ h.usuario_responsavel.nome_completo|default:h.usuario_responsavel.username }}{% elif not h.status_anterior %}Pelo autor{% endif %}</small>
+                {% if h.observacao and h.status_anterior %}<small>Motivo: {{ h.observacao }}</small>{% endif %}
+              </span>
+            </li>
+          {% endfor %}
+        </ol>
+      </section>
+    </div>
+
+    <div class="analise__coluna">
+      <section class="bloco-painel">
+        <h2>Autor</h2>
+        {# Dados mínimos para a análise: sem e-mail nem telefone #}
+        <dl class="dados">
+          <div><dt>Nome</dt><dd>{{ d.usuario.nome_completo|default:"—" }}</dd></div>
+          <div><dt>Usuário</dt><dd>@{{ d.usuario.username }}{% if not d.usuario.is_active %} <span class="situacao situacao--bloqueado">Bloqueado</span>{% endif %}</dd></div>
+          <div><dt>Denúncias registradas</dt><dd>{{ autor_total }}{% if autor_rejeitadas %}, sendo {{ autor_rejeitadas }} rejeitada{{ autor_rejeitadas|pluralize }}{% endif %}</dd></div>
+        </dl>
+        {% if d.anonima %}
+          <p class="aviso-equipe"><svg class="icone" aria-hidden="true"><use href="#i-olho"/></svg><span><strong>Denúncia anônima.</strong> O nome do autor aparece só para a equipe. Não o compartilhe fora do sistema.</span></p>
+        {% endif %}
+      </section>
+
+      <section class="bloco-painel">
+        <h2>Análise</h2>
+
+        {% if d.status == "ENVIADA" %}
+          <form class="acao acao--aceitar" method="post" action="{% url 'painel_aceitar' d.pk %}">
+            {% csrf_token %}
+            <h3>Aceitar denúncia</h3>
+            <p>A foto mostra esgoto a céu aberto, o endereço identifica o local e a descrição corresponde à foto.</p>
+            <label class="caixa"><input type="checkbox" name="encaminhada"><span>O caso já foi encaminhado à prefeitura</span></label>
+            <button class="botao botao--primario" type="submit">Aceitar</button>
+          </form>
+
+          <form class="acao acao--rejeitar" method="post" action="{% url 'painel_rejeitar' d.pk %}">
+            {% csrf_token %}
+            <h3>Rejeitar denúncia</h3>
+            <div class="campo">
+              <label for="motivo">Motivo <span class="campo__opcional">(recomendado)</span></label>
+              <textarea id="motivo" name="motivo" rows="3" maxlength="255" placeholder="Ex.: a foto mostra lixo acumulado, não esgoto a céu aberto."></textarea>
+              <span class="campo__ajuda">O motivo aparece para o autor em Minhas denúncias.</span>
+            </div>
+            <button class="botao botao--perigo" type="submit">Rejeitar</button>
+          </form>
+
+        {% elif d.status == "ACEITA" %}
+          <div class="acao-grupo">
+            {% if not d.encaminhada_orgao %}
+              <form class="acao" method="post" action="{% url 'painel_encaminhar' d.pk %}">
+                {% csrf_token %}
+                <h3>Registrar encaminhamento</h3>
+                <p>Informe a data em que o caso foi levado à prefeitura.</p>
+                <div class="campo">
+                  <label for="data">Data do encaminhamento</label>
+                  <input id="data" name="data" type="date" value="{{ hoje|date:'Y-m-d' }}" max="{{ hoje|date:'Y-m-d' }}" required>
+                </div>
+                <button class="botao botao--primario" type="submit">Registrar encaminhamento</button>
+              </form>
+            {% endif %}
+
+            <form class="acao acao--aceitar" method="post" action="{% url 'painel_resolver' d.pk %}">
+              {% csrf_token %}
+              <h3>Marcar como resolvida</h3>
+              <p>Use quando o problema tiver sido solucionado no local.</p>
+              <button class="botao botao--primario" type="submit">Marcar como resolvida</button>
+            </form>
+          </div>
+
+        {% else %}
+          <p class="concluida">Análise concluída. Esta denúncia está <strong>{{ d.get_status_display|lower }}</strong> e não tem mais ações pendentes.</p>
+        {% endif %}
+
+        <div class="zona-perigo">
+          <p>Use a exclusão apenas para conteúdo impróprio, como ofensas ou exposição de pessoas.</p>
+          <details class="confirmar">
+            <summary class="botao botao--texto-perigo botao--pequeno">Excluir denúncia</summary>
+            <div class="confirmar__caixa">
+              <p>A denúncia deixa de aparecer para todos. A ação fica registrada no log administrativo.</p>
+              <form method="post" action="{% url 'painel_excluir' d.pk %}">
+                {% csrf_token %}
+                <button class="botao botao--perigo botao--pequeno" type="submit">Sim, excluir</button>
+              </form>
+            </div>
+          </details>
+        </div>
+      </section>
+    </div>
+  </div>
+{% endblock %}

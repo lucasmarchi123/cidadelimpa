@@ -1,0 +1,62 @@
+{% extends "painel/base_painel.html" %}
+
+{% block titulo %}Denúncias — Painel CidadeLimpa{% endblock %}
+
+{% block painel %}
+  <div class="pagina__cabecalho">
+    <h1>Denúncias</h1>
+    <p>{% if status == "ENVIADA" %}A fila mostra primeiro as denúncias que esperam há mais tempo.{% else %}As mais recentes aparecem primeiro.{% endif %}</p>
+  </div>
+
+  <nav class="filtros" aria-label="Filtrar por status">
+    {% for f in filtros %}
+      <a href="{% url 'painel_denuncias' %}?status={{ f.valor }}"{% if f.ativo %} aria-current="page"{% endif %}>{{ f.rotulo }} <small>{{ f.total }}</small></a>
+    {% endfor %}
+  </nav>
+
+  <form class="busca" role="search" method="get" action="{% url 'painel_denuncias' %}">
+    <input type="hidden" name="status" value="{{ status }}">
+    <div class="campo">
+      <label for="p-busca">Buscar por rua, bairro ou número da denúncia</label>
+      <input id="p-busca" name="busca" type="search" value="{{ busca }}" maxlength="100" placeholder="Ex.: Rua das Flores ou 58">
+    </div>
+    <div class="campo">
+      <label for="p-mun">Município</label>
+      <select id="p-mun" name="municipio">
+        <option value="">Todos os municípios</option>
+        {% for m in municipios %}
+          <option value="{{ m.pk }}"{% if m.pk|stringformat:"s" == municipio_id %} selected{% endif %}>{{ m.nome }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <button class="botao botao--primario" type="submit"><svg class="icone" aria-hidden="true"><use href="#i-lupa"/></svg>Buscar</button>
+  </form>
+
+  {% if pagina.paginator.count %}
+    <div class="tabela-rolagem">
+      <table class="tabela">
+        <thead><tr><th>Nº</th><th>Registrada</th><th>Endereço</th><th>Autor</th><th>Status</th><th></th></tr></thead>
+        <tbody>
+          {% for d in pagina %}
+            <tr>
+              <td>{{ d.pk }}</td>
+              <td>{{ d.data_registro|date:"d/m/Y" }}</td>
+              <td>{{ d.local.logradouro }}, {{ d.local.numero }}<small>{{ d.local.bairro }}, {{ d.local.municipio }}</small></td>
+              <td>{{ d.usuario.nome_completo|default:d.usuario.username }}{% if d.anonima %} <span class="etiqueta">Anônima</span>{% endif %}</td>
+              <td><span class="status status--{{ d.status|lower }}">{{ d.get_status_display }}</span></td>
+              <td class="tabela__acao">
+                <a class="botao {% if d.status == 'ENVIADA' %}botao--primario{% else %}botao--secundario{% endif %} botao--pequeno" href="{% url 'painel_analise' d.pk %}">{% if d.status == 'ENVIADA' %}Analisar{% else %}Ver{% endif %}</a>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% include "painel/paginacao.html" %}
+  {% else %}
+    <div class="vazio">
+      <h2>Nenhuma denúncia encontrada</h2>
+      <p>{% if status == "ENVIADA" and not busca %}A fila de análise está em dia.{% else %}Tente outro filtro ou outra busca.{% endif %}</p>
+    </div>
+  {% endif %}
+{% endblock %}

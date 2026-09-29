@@ -1,0 +1,93 @@
+{% extends "painel/base_painel.html" %}
+
+{% block titulo %}Usuários — Painel CidadeLimpa{% endblock %}
+
+{% block painel %}
+  <div class="pagina__cabecalho">
+    <h1>Usuários</h1>
+    <p>Consulte as contas cadastradas e bloqueie o acesso de quem descumprir as regras de uso.</p>
+  </div>
+
+  <nav class="filtros" aria-label="Filtrar usuários">
+    {% for f in filtros %}
+      <a href="{% url 'painel_usuarios' %}?filtro={{ f.valor }}"{% if f.ativo %} aria-current="page"{% endif %}>{{ f.rotulo }} <small>{{ f.total }}</small></a>
+    {% endfor %}
+  </nav>
+
+  <form class="busca" role="search" method="get" action="{% url 'painel_usuarios' %}">
+    <input type="hidden" name="filtro" value="{{ filtro }}">
+    <div class="campo">
+      <label for="u-busca">Buscar por nome ou usuário</label>
+      <input id="u-busca" name="busca" type="search" value="{{ busca }}" maxlength="100" placeholder="Ex.: Ana ou anasouza">
+    </div>
+    <div class="campo">
+      <label for="u-ordem">Ordenar por</label>
+      <select id="u-ordem" name="ordem">
+        {% for chave, rotulo in ordens %}
+          <option value="{{ chave }}"{% if chave == ordem %} selected{% endif %}>{{ rotulo }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <button class="botao botao--primario" type="submit"><svg class="icone" aria-hidden="true"><use href="#i-lupa"/></svg>Buscar</button>
+  </form>
+
+  {% if pagina.paginator.count %}
+    <div class="tabela-rolagem">
+      <table class="tabela">
+        <thead><tr><th>Pessoa</th><th>Perfil</th><th>Cadastro</th><th>Denúncias</th><th>Situação</th><th></th></tr></thead>
+        <tbody>
+          {% for u in pagina %}
+            <tr>
+              <td>
+                <div class="pessoa">
+                  <span class="conta__avatar" aria-hidden="true">{{ u.iniciais }}</span>
+                  <span>{{ u.nome_completo|default:u.username }}<small>@{{ u.username }}</small></span>
+                </div>
+              </td>
+              <td>{% if u.is_staff %}<span class="papel papel--admin">Administrador</span>{% else %}<span class="papel">Cidadão</span>{% endif %}</td>
+              <td>{{ u.date_joined|date:"d/m/Y" }}</td>
+              <td>{{ u.n_denuncias }}{% if u.n_rejeitadas %}<small>{{ u.n_rejeitadas }} rejeitada{{ u.n_rejeitadas|pluralize }}</small>{% endif %}</td>
+              <td>{% if u.is_active %}<span class="situacao">Ativo</span>{% else %}<span class="situacao situacao--bloqueado">Bloqueado</span>{% endif %}</td>
+              <td class="tabela__acao">
+                {% if u.pk == user.pk %}
+                  <span class="campo__ajuda">Sua conta</span>
+                {% elif not u.pode_alterar %}
+                  <span class="campo__ajuda">Só o superusuário altera administradores</span>
+                {% elif u.is_active %}
+                  <details class="confirmar">
+                    <summary class="botao botao--texto-perigo botao--pequeno">Bloquear</summary>
+                    <div class="confirmar__caixa">
+                      <p>A pessoa não consegue mais entrar. As denúncias dela continuam no sistema.</p>
+                      <form method="post" action="{% url 'painel_bloquear' u.pk %}" class="acao-grupo">
+                        {% csrf_token %}
+                        <div class="campo">
+                          <label for="motivo-{{ u.pk }}">Motivo</label>
+                          <input id="motivo-{{ u.pk }}" name="motivo" type="text" maxlength="200" required placeholder="Ex.: envio repetido de conteúdo ofensivo">
+                        </div>
+                        <button class="botao botao--perigo botao--pequeno" type="submit">Sim, bloquear</button>
+                      </form>
+                    </div>
+                  </details>
+                {% else %}
+                  <details class="confirmar">
+                    <summary class="botao botao--secundario botao--pequeno">Desbloquear</summary>
+                    <div class="confirmar__caixa">
+                      <p>A pessoa volta a poder entrar e enviar denúncias.</p>
+                      <form method="post" action="{% url 'painel_desbloquear' u.pk %}">
+                        {% csrf_token %}
+                        <button class="botao botao--primario botao--pequeno" type="submit">Sim, desbloquear</button>
+                      </form>
+                    </div>
+                  </details>
+                {% endif %}
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% include "painel/paginacao.html" %}
+  {% else %}
+    <div class="vazio"><h2>Nenhum usuário encontrado</h2><p>Tente outro filtro ou outra busca.</p></div>
+  {% endif %}
+{% endblock %}

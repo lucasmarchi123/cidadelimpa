@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block conteudo %}
+  <nav class="painel-nav" aria-label="Área administrativa">
+    <div class="conteiner painel-nav__barra">
+      <span class="painel-nav__rotulo">Administração</span>
+      <a href="{% url 'painel' %}"{% if aba == 'geral' %} aria-current="page"{% endif %}>Visão geral</a>
+      <a href="{% url 'painel_denuncias' %}"{% if aba == 'denuncias' %} aria-current="page"{% endif %}>Denúncias</a>
+      <a href="{% url 'painel_usuarios' %}"{% if aba == 'usuarios' %} aria-current="page"{% endif %}>Usuários</a>
+    </div>
+  </nav>
+
+  <main class="conteiner pagina">
+    {% block painel %}{% endblock %}
+  </main>
+{% endblock %}

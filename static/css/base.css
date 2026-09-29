@@ -1,6 +1,6 @@
 /* Estilos dos elementos HTML — CidadeLimpa */
 
-*, *::before, *::after { box-sizing: inherit; }
+*, *::before, *::after { box-sizing: border-box; }
 html { height: 100%; scroll-padding-top: calc(env(safe-area-inset-top, 0px) + 3rem); }
 body { margin: 0; min-height: 100%; background: var(--fundo); color: var(--tinta);
   font-family: var(--fonte); font-size: 1.0625rem; line-height: 1.55; -webkit-text-size-adjust: 100%; }

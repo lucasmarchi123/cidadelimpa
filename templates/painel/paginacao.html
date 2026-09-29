@@ -1,0 +1,11 @@
+{% if pagina.has_other_pages %}
+  <nav class="paginacao" aria-label="Páginas">
+    {% if pagina.has_previous %}
+      <a class="botao botao--secundario botao--pequeno" href="{% querystring pagina=pagina.previous_page_number %}">Página anterior</a>
+    {% endif %}
+    <span>Página {{ pagina.number }} de {{ pagina.paginator.num_pages }}</span>
+    {% if pagina.has_next %}
+      <a class="botao botao--secundario botao--pequeno" href="{% querystring pagina=pagina.next_page_number %}">Próxima página</a>
+    {% endif %}
+  </nav>
+{% endif %}

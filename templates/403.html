@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block titulo %}Acesso restrito — CidadeLimpa{% endblock %}
+
+{% block conteudo %}
+  <main class="conteiner acesso acesso--simples">
+    <div class="acesso__painel">
+      <span class="selo" aria-hidden="true"><svg class="icone"><use href="#i-cadeado"/></svg></span>
+      <h1>Acesso restrito</h1>
+      <p>Esta área é exclusiva da equipe de análise do CidadeLimpa.</p>
+      <a class="botao botao--primario" href="{% url 'inicio' %}">Voltar ao início</a>
+    </div>
+  </main>
+{% endblock %}

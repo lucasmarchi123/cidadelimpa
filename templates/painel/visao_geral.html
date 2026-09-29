@@ -1,0 +1,93 @@
+{% extends "painel/base_painel.html" %}
+
+{% block titulo %}Visão geral — Painel CidadeLimpa{% endblock %}
+
+{% block painel %}
+  <div class="pagina__cabecalho">
+    <h1>Visão geral</h1>
+    <p>Acompanhe o volume de denúncias e o que precisa de atenção da equipe.</p>
+  </div>
+
+  <div class="metricas">
+    <a class="metrica metrica--destaque" href="{% url 'painel_denuncias' %}" style="--cor: var(--st-enviada)">
+      <span class="metrica__rotulo">Aguardando análise</span>
+      <span class="metrica__valor">{{ enviadas }}</span>
+      <span class="metrica__nota">{% if espera_max is not None %}A mais antiga espera há {{ espera_max }} dia{{ espera_max|pluralize }}{% else %}Nenhuma na fila{% endif %}</span>
+    </a>
+    <div class="metrica" style="--cor: var(--st-aceita)">
+      <span class="metrica__rotulo">Aceitas</span>
+      <span class="metrica__valor">{{ aceitas }}</span>
+      <span class="metrica__nota">{{ nao_encaminhadas }} ainda não encaminhada{{ nao_encaminhadas|pluralize }}</span>
+    </div>
+    <div class="metrica" style="--cor: var(--st-resolvida)">
+      <span class="metrica__rotulo">Resolvidas</span>
+      <span class="metrica__valor">{{ resolvidas }}</span>
+      <span class="metrica__nota">{{ pct_resolvidas }}% do total</span>
+    </div>
+    <div class="metrica" style="--cor: var(--st-rejeitada)">
+      <span class="metrica__rotulo">Rejeitadas</span>
+      <span class="metrica__valor">{{ rejeitadas }}</span>
+      <span class="metrica__nota">{{ pct_rejeitadas }}% das analisadas</span>
+    </div>
+  </div>
+
+  <div class="resumo-linha">
+    <div><strong>{{ ultimos_30 }}</strong>denúncia{{ ultimos_30|pluralize }} nos últimos 30 dias</div>
+    <div><strong>{{ tempo_medio|default:"—" }}</strong>tempo médio até a análise</div>
+    <div><strong>{{ total_usuarios }}</strong>usuário{{ total_usuarios|pluralize }} cadastrado{{ total_usuarios|pluralize }}</div>
+  </div>
+
+  <div class="grade-painel">
+    <section class="bloco-painel">
+      <h2>Municípios com mais denúncias</h2>
+      {% if municipios %}
+        <ul class="barras">
+          {% for m in municipios %}
+            <li><span>{{ m.local__municipio__nome }}</span><span class="barras__trilha"><span style="width: {{ m.largura }}%"></span></span><b>{{ m.n }}</b></li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <p class="campo__ajuda">Ainda não há dados.</p>
+      {% endif %}
+    </section>
+
+    <section class="bloco-painel">
+      <h2>Endereços com mais denúncias</h2>
+      {% if enderecos %}
+        <ol class="ranking">
+          {% for local in enderecos %}
+            <li><a href="{% url 'local' local.pk %}">{{ local.logradouro }}, {{ local.numero }}<small>{{ local.bairro }}, {{ local.municipio }}</small></a><b>{{ local.n }}</b></li>
+          {% endfor %}
+        </ol>
+      {% else %}
+        <p class="campo__ajuda">Ainda não há dados.</p>
+      {% endif %}
+    </section>
+
+    <section class="bloco-painel bloco-painel--largo">
+      <div class="bloco-painel__topo">
+        <h2>Esperando há mais tempo</h2>
+        <a href="{% url 'painel_denuncias' %}">Ver fila completa</a>
+      </div>
+      {% if fila %}
+        <div class="tabela-rolagem">
+          <table class="tabela">
+            <thead><tr><th>Registrada</th><th>Endereço</th><th>Espera</th><th></th></tr></thead>
+            <tbody>
+              {% for d in fila %}
+                <tr>
+                  <td>{{ d.data_registro|date:"d/m/Y" }}</td>
+                  <td>{{ d.local.logradouro }}, {{ d.local.numero }}<small>{{ d.local.bairro }}, {{ d.local.municipio }}</small></td>
+                  <td{% if d.espera >= 5 %} class="alerta-espera"{% endif %}>{{ d.espera }} dia{{ d.espera|pluralize }}</td>
+                  <td class="tabela__acao"><a class="botao botao--primario botao--pequeno" href="{% url 'painel_analise' d.pk %}">Analisar</a></td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      {% else %}
+        <p class="concluida">Nenhuma denúncia aguardando análise. A fila está em dia.</p>
+      {% endif %}
+    </section>
+  </div>
+{% endblock %}
