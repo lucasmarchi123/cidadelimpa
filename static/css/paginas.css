@@ -418,6 +418,21 @@ a.metrica:hover { border-color: var(--verde); }
   .documento__indice { position: static; }
 }
 
+/* Perguntas frequentes */
+.faq { display: grid; gap: .7rem; max-width: 52rem; }
+.faq details { border: 1px solid var(--linha); border-radius: var(--r-m); background: var(--papel);
+  transition: border-color .15s; }
+.faq details[open] { border-color: var(--verde); }
+.faq summary { list-style: none; cursor: pointer; display: flex; justify-content: space-between; align-items: center;
+  gap: 1rem; padding: 1rem 1.2rem; font-weight: 650; font-size: 1.02rem; }
+.faq summary::-webkit-details-marker { display: none; }
+.faq summary:hover { color: var(--link); }
+.faq summary .icone { flex: none; width: 1.15rem; height: 1.15rem; color: var(--verde); transition: transform .15s; }
+.faq details[open] summary .icone { transform: rotate(180deg); }
+.faq__resposta { padding: 0 1.2rem 1.15rem; color: var(--tinta-suave); }
+.faq__mais { margin-top: 1.25rem; color: var(--tinta-suave); }
+@media (prefers-reduced-motion: reduce) { .faq details, .faq summary .icone { transition: none; } }
+
 /* Responsivo */
 @media (max-width: 60rem) {
   .passos { grid-template-columns: repeat(2, minmax(0, 1fr)); }

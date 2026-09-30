@@ -123,6 +123,58 @@
       </div>
     </section>
 
+    <section class="secao" id="perguntas">
+      <div class="conteiner">
+        <div class="secao__topo">
+          <h2>Perguntas frequentes</h2>
+          <p>As dúvidas mais comuns de quem usa o CidadeLimpa.</p>
+        </div>
+        <div class="faq">
+          <details>
+            <summary>Preciso criar uma conta para denunciar?<svg class="icone" aria-hidden="true"><use href="#i-abrir"/></svg></summary>
+            <p class="faq__resposta">Sim. A conta permite que você acompanhe cada etapa da sua denúncia e nos ajuda a evitar registros falsos. O <a href="{% url 'cadastro' %}">cadastro</a> é rápido e gratuito.</p>
+          </details>
+          <details>
+            <summary>Já existe uma denúncia neste endereço. Devo denunciar mesmo assim?<svg class="icone" aria-hidden="true"><use href="#i-abrir"/></svg></summary>
+            <p class="faq__resposta">Sim. Sua denúncia entra no histórico do mesmo local e mostra que o problema continua. Quanto mais registros, mais forte o pedido chega à prefeitura.</p>
+          </details>
+          <details>
+            <summary>Quanto tempo leva para minha denúncia ser analisada?<svg class="icone" aria-hidden="true"><use href="#i-abrir"/></svg></summary>
+            <p class="faq__resposta">Nossa equipe analisa as denúncias por ordem de chegada, começando pelas que esperam há mais tempo. Você acompanha a situação em <a href="{% url 'minhas_denuncias' %}">Minhas denúncias</a>.</p>
+          </details>
+          <details>
+            <summary>E quanto tempo até o problema ser resolvido?<svg class="icone" aria-hidden="true"><use href="#i-abrir"/></svg></summary>
+            <p class="faq__resposta">Depois de aceita, a denúncia é encaminhada à prefeitura, que é responsável pelo reparo. O CidadeLimpa não executa obras, por isso não consegue garantir prazos, mas registra cada etapa para você acompanhar.</p>
+          </details>
+          <details>
+            <summary>Como sei em que etapa está minha denúncia?<svg class="icone" aria-hidden="true"><use href="#i-abrir"/></svg></summary>
+            <p class="faq__resposta">Em <a href="{% url 'minhas_denuncias' %}">Minhas denúncias</a>, cada registro mostra o caminho percorrido, com a data de cada mudança. O sistema não envia avisos, então vale conferir de tempos em tempos.</p>
+          </details>
+          <details>
+            <summary>Por que minha denúncia foi rejeitada?<svg class="icone" aria-hidden="true"><use href="#i-abrir"/></svg></summary>
+            <p class="faq__resposta">Ela não atendeu a algum dos critérios de análise: a foto precisa mostrar esgoto a céu aberto, o endereço precisa identificar o local e a descrição precisa corresponder à foto. Quando a equipe informa o motivo, ele aparece em <a href="{% url 'minhas_denuncias' %}">Minhas denúncias</a>. Você pode enviar uma nova denúncia com as informações corrigidas.</p>
+          </details>
+          <details>
+            <summary>A denúncia anônima é realmente anônima?<svg class="icone" aria-hidden="true"><use href="#i-abrir"/></svg></summary>
+            <p class="faq__resposta">Seu nome não aparece para nenhum outro usuário, e a prefeitura não recebe seus dados pessoais. Apenas a equipe de análise sabe quem registrou, para verificar as denúncias e impedir abusos.</p>
+          </details>
+          <details>
+            <summary>Posso editar ou excluir uma denúncia depois de enviar?<svg class="icone" aria-hidden="true"><use href="#i-abrir"/></svg></summary>
+            <p class="faq__resposta">Editar, não: para manter o histórico confiável, a denúncia não pode ser alterada. Excluir, sim, enquanto ela estiver aguardando análise. Se algo estiver errado, exclua e registre uma nova. Depois de analisada, ela passa a fazer parte do histórico do endereço e não pode mais ser excluída.</p>
+          </details>
+          <details>
+            <summary>Esqueci minha senha. O que faço?<svg class="icone" aria-hidden="true"><use href="#i-abrir"/></svg></summary>
+            <p class="faq__resposta">Na tela de entrada, clique em <a href="{% url 'password_reset' %}">Esqueci minha senha</a> e informe seu e-mail. Você recebe um link para criar uma nova senha, válido por uma hora.</p>
+          </details>
+          <details>
+            <summary>Como falo com a equipe do CidadeLimpa?<svg class="icone" aria-hidden="true"><use href="#i-abrir"/></svg></summary>
+            <p class="faq__resposta">Pelo e-mail <a href="mailto:{{ email_contato }}">{{ email_contato }}</a>. Ele também recebe pedidos sobre os seus dados pessoais, como acesso, correção ou exclusão.</p>
+          </details>
+        </div>
+        <p class="faq__mais">Não encontrou sua dúvida? Escreva para <a href="mailto:{{ email_contato }}">{{ email_contato }}</a>.</p>
+      </div>
+    </section>
+
     <section class="secao" style="padding-top:0">
       <div class="conteiner">
         <div class="protecao">
