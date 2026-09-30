@@ -145,7 +145,7 @@ PASSWORD_RESET_TIMEOUT = 60 * 60
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
-EMAIL_CONTATO = os.environ.get('EMAIL_CONTATO', '')
+EMAIL_CONTATO = os.environ.get('EMAIL_CONTATO', 'programacidadelimpa@gmail.com')
 GOOGLE_MAPS_API_KEY = os.environ.get('GOOGLE_MAPS_API_KEY', '')
 
 # ---------------------------------------------------------------
