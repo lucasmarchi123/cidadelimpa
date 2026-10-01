@@ -13,11 +13,10 @@ from django.utils.http import url_has_allowed_host_and_scheme
 from django.views.decorators.http import require_POST
 
 from .forms import DenunciaForm
+from .regras import META_PRIORIDADE, STATUS_PUBLICOS, curtidas_do_endereco, e_prioridade
 from .models import Curtida, Denuncia, HistoricoStatus, Local, Municipio
 from .utils import normalizar, normalizar_logradouro
 
-# Status que outros usuários podem ver. Rejeitadas ficam só no histórico do autor.
-STATUS_PUBLICOS = [Denuncia.Status.ENVIADA, Denuncia.Status.ACEITA, Denuncia.Status.RESOLVIDA]
 VISIVEL = Q(denuncias__excluida=False, denuncias__status__in=STATUS_PUBLICOS)
 
 
@@ -53,6 +52,7 @@ def lista(request):
         .annotate(
             total=Count('denuncias', filter=VISIVEL),
             ultima=Max('denuncias__data_registro', filter=VISIVEL),
+            curtidas_total=curtidas_do_endereco('pk'),
         )
         .filter(total__gt=0)
         .order_by('-ultima')
@@ -85,6 +85,8 @@ def lista(request):
     ))
 
     pagina = Paginator(locais, 12).get_page(request.GET.get('pagina'))
+    for local in pagina:
+        local.prioridade = e_prioridade(local.curtidas_total, local.visiveis[0].status)
     municipios = sorted(
         Municipio.objects.filter(locais__isnull=False).distinct(),
         key=lambda m: normalizar(m.nome),
@@ -111,12 +113,17 @@ def local(request, pk):
     if not denuncias:
         raise Http404
 
+    total_curtidas = sum(d.n_curtidas for d in denuncias)
     return render(request, 'denuncias/local.html', {
         'local': local,
         'denuncias': denuncias,
         'situacao': denuncias[0],
-        'total_curtidas': sum(d.n_curtidas for d in denuncias),
+        'total_curtidas': total_curtidas,
         'mapa_url': url_do_mapa(local),
+        'prioridade': e_prioridade(total_curtidas, denuncias[0].status),
+        'meta': META_PRIORIDADE,
+        'faltam': max(0, META_PRIORIDADE - total_curtidas),
+        'progresso': min(100, round(total_curtidas * 100 / META_PRIORIDADE)),
     })
 
 

@@ -77,7 +77,7 @@
               {% for d in fila %}
                 <tr>
                   <td>{{ d.data_registro|date:"d/m/Y" }}</td>
-                  <td>{{ d.local.logradouro }}, {{ d.local.numero }}<small>{{ d.local.bairro }}, {{ d.local.municipio }}</small></td>
+                  <td>{{ d.local.logradouro }}, {{ d.local.numero }}<small>{{ d.local.bairro }}, {{ d.local.municipio }}</small>{% if d.curtidas_local >= meta %}<span class="selo-prioridade selo-prioridade--pequeno"><svg class="icone" aria-hidden="true"><use href="#i-megafone"/></svg>Prioridade da comunidade</span>{% endif %}</td>
                   <td{% if d.espera >= 5 %} class="alerta-espera"{% endif %}>{{ d.espera }} dia{{ d.espera|pluralize }}</td>
                   <td class="tabela__acao"><a class="botao botao--primario botao--pequeno" href="{% url 'painel_analise' d.pk %}">Analisar</a></td>
                 </tr>

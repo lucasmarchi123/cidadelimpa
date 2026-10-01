@@ -5,13 +5,14 @@ from django.contrib.auth import get_user_model
 from django.core.exceptions import PermissionDenied
 from django.core.paginator import Paginator
 from django.db import transaction
-from django.db.models import Count, Min, Q
+from django.db.models import Case, Count, IntegerField, Min, Q, Value, When
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 from django.utils.dateparse import parse_date
 from django.views.decorators.http import require_POST
 
 from denuncias.models import Denuncia, HistoricoStatus, Local, LogAdmin, Municipio
+from denuncias.regras import META_PRIORIDADE, curtidas_do_endereco
 from denuncias.utils import normalizar, normalizar_logradouro
 
 from .decorators import equipe_requerida
@@ -75,6 +76,7 @@ def visao_geral(request):
 
     fila = list(
         ativas.filter(status=S.ENVIADA).select_related('local__municipio')
+        .annotate(curtidas_local=curtidas_do_endereco())
         .order_by('data_registro')[:5]
     )
     for d in fila:
@@ -92,6 +94,7 @@ def visao_geral(request):
         'tempo_medio': formatar_duracao(sum(duracoes) / len(duracoes)) if duracoes else None,
         'total_usuarios': Usuario.objects.count(),
         'municipios': municipios, 'enderecos': enderecos, 'fila': fila,
+        'meta': META_PRIORIDADE,
     })
 
 
@@ -139,9 +142,19 @@ def denuncias(request):
     if municipio_id.isdigit():
         lista = lista.filter(local__municipio_id=int(municipio_id))
 
-    # A fila de análise mostra primeiro quem espera há mais tempo
-    ordem = 'data_registro' if status == S.ENVIADA else '-data_registro'
-    lista = lista.select_related('local__municipio', 'usuario').order_by(ordem)
+    # Prioridade da comunidade: endereço com muitas curtidas e ainda não resolvido
+    lista = lista.annotate(curtidas_local=curtidas_do_endereco()).annotate(
+        prioridade=Case(
+            When(curtidas_local__gte=META_PRIORIDADE, status__in=[S.ENVIADA, S.ACEITA], then=Value(1)),
+            default=Value(0), output_field=IntegerField(),
+        )
+    )
+    # Na fila de análise, as prioridades vêm primeiro; depois, quem espera há mais tempo
+    if status == S.ENVIADA:
+        ordem = ['-prioridade', 'data_registro']
+    else:
+        ordem = ['-data_registro']
+    lista = lista.select_related('local__municipio', 'usuario').order_by(*ordem)
     pagina = Paginator(lista, 20).get_page(request.GET.get('pagina'))
 
     filtros = [
@@ -162,7 +175,9 @@ def denuncias(request):
 @equipe_requerida
 def analise(request, pk):
     d = get_object_or_404(
-        Denuncia.objects.select_related('local__municipio', 'usuario'), pk=pk, excluida=False
+        Denuncia.objects.select_related('local__municipio', 'usuario')
+        .annotate(curtidas_local=curtidas_do_endereco()),
+        pk=pk, excluida=False,
     )
     outras = (Denuncia.objects.filter(local=d.local, excluida=False)
               .exclude(pk=d.pk).order_by('-data_registro'))
@@ -178,6 +193,7 @@ def analise(request, pk):
         'autor_total': do_autor.count(),
         'autor_rejeitadas': do_autor.filter(status=S.REJEITADA).count(),
         'hoje': timezone.localdate(),
+        'meta': META_PRIORIDADE,
     })
 
 

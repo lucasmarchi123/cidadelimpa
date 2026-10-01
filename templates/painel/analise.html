@@ -36,6 +36,7 @@
         <dl class="dados">
           <div><dt>Endereço</dt><dd>{% if d.local.numero != "S/N" %}Número {{ d.local.numero }}{% else %}Sem número{% endif %}, {{ d.local.bairro }}, {{ d.local.municipio }}</dd></div>
           {% if d.local.ponto_referencia %}<div><dt>Ponto de referência</dt><dd>{{ d.local.ponto_referencia }}</dd></div>{% endif %}
+          <div><dt>Curtidas no endereço</dt><dd>{{ d.curtidas_local }} de {{ meta }} para a meta{% if d.curtidas_local >= meta and d.status != "RESOLVIDA" and d.status != "REJEITADA" %} <span class="selo-prioridade selo-prioridade--pequeno"><svg class="icone" aria-hidden="true"><use href="#i-megafone"/></svg>Prioridade da comunidade</span>{% endif %}</dd></div>
           <div><dt>Outras denúncias neste endereço</dt><dd>
             {% if outras_total %}{{ outras_total }}, a mais recente {{ outra_recente.get_status_display|lower }} em {{ outra_recente.data_registro|date:"d/m/Y" }}{% else %}Nenhuma{% endif %}
           </dd></div>

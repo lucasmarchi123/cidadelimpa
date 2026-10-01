@@ -5,7 +5,7 @@
 {% block painel %}
   <div class="pagina__cabecalho">
     <h1>Denúncias</h1>
-    <p>{% if status == "ENVIADA" %}A fila mostra primeiro as denúncias que esperam há mais tempo.{% else %}As mais recentes aparecem primeiro.{% endif %}</p>
+    <p>{% if status == "ENVIADA" %}A fila mostra primeiro as prioridades da comunidade e, depois, as denúncias que esperam há mais tempo.{% else %}As mais recentes aparecem primeiro.{% endif %}</p>
   </div>
 
   <nav class="filtros" aria-label="Filtrar por status">
@@ -41,7 +41,7 @@
             <tr>
               <td>{{ d.pk }}</td>
               <td>{{ d.data_registro|date:"d/m/Y" }}</td>
-              <td>{{ d.local.logradouro }}, {{ d.local.numero }}<small>{{ d.local.bairro }}, {{ d.local.municipio }}</small></td>
+              <td>{{ d.local.logradouro }}, {{ d.local.numero }}<small>{{ d.local.bairro }}, {{ d.local.municipio }}</small>{% if d.prioridade %}<span class="selo-prioridade selo-prioridade--pequeno"><svg class="icone" aria-hidden="true"><use href="#i-megafone"/></svg>Prioridade da comunidade</span>{% endif %}</td>
               <td>{{ d.usuario.nome_completo|default:d.usuario.username }}{% if d.anonima %} <span class="etiqueta">Anônima</span>{% endif %}</td>
               <td><span class="status status--{{ d.status|lower }}">{{ d.get_status_display }}</span></td>
               <td class="tabela__acao">

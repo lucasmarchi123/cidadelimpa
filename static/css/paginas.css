@@ -483,6 +483,23 @@ a.metrica:hover { border-color: var(--verde); }
   .barras-rn li > span:first-child { grid-column: 1 / -1; }
 }
 
+/* Prioridade da comunidade */
+.selo-prioridade { display: inline-flex; align-items: center; gap: .4rem; padding: .3rem .65rem; border-radius: 6px;
+  background: var(--sol); color: #3A2A00; font-size: .82rem; font-weight: 750; line-height: 1.2; white-space: nowrap; }
+.selo-prioridade .icone { width: 1rem; height: 1rem; }
+.selo-prioridade--pequeno { margin-top: .35rem; padding: .2rem .5rem; font-size: .75rem; }
+.selo-prioridade--pequeno .icone { width: .85rem; height: .85rem; }
+.tabela .selo-prioridade--pequeno { display: flex; width: max-content; }
+.local-card__foto { position: relative; }
+.local-card__foto .selo-prioridade { position: absolute; top: .6rem; left: .6rem; box-shadow: 0 6px 16px -8px rgba(0, 0, 0, .5); }
+.mobilizacao { display: grid; gap: .6rem; padding: 1.1rem 1.2rem; border-radius: var(--r-m);
+  border: 1.5px dashed var(--linha-forte); }
+.mobilizacao p { max-width: none; }
+.mobilizacao small { color: var(--tinta-suave); font-size: .88rem; }
+.mobilizacao__trilha { height: .75rem; border-radius: 4px; background: var(--menta); overflow: hidden; }
+.mobilizacao__trilha span { display: block; height: 100%; border-radius: 4px; background: var(--sol); }
+.mobilizacao--atingida { border: 0; background: var(--st-enviada-fundo); justify-items: start; }
+
 /* Responsivo */
 @media (max-width: 60rem) {
   .passos { grid-template-columns: repeat(2, minmax(0, 1fr)); }

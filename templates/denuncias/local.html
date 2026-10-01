@@ -20,6 +20,21 @@
           <span><strong>{{ denuncias|length }}</strong> denúncia{{ denuncias|length|pluralize }}</span>
           <span><strong>{{ total_curtidas }}</strong> curtida{{ total_curtidas|pluralize }}</span>
         </div>
+
+        {% if situacao.status != "RESOLVIDA" %}
+          <div class="mobilizacao{% if prioridade %} mobilizacao--atingida{% endif %}">
+            {% if prioridade %}
+              <span class="selo-prioridade"><svg class="icone" aria-hidden="true"><use href="#i-megafone"/></svg>Prioridade da comunidade</span>
+              <p><strong>{{ total_curtidas }} pessoas</strong> apoiaram este endereço. A equipe dá atenção especial às prioridades da comunidade.</p>
+            {% else %}
+              <p>Faltam <strong>{{ faltam }} curtida{{ faltam|pluralize }}</strong> para este endereço virar <strong>Prioridade da comunidade</strong>.</p>
+              <div class="mobilizacao__trilha" role="progressbar" aria-valuemin="0" aria-valuemax="{{ meta }}" aria-valuenow="{{ total_curtidas }}" aria-label="Curtidas até a meta">
+                <span style="width: {{ progresso }}%"></span>
+              </div>
+              <small>{{ total_curtidas }} de {{ meta }} curtidas. Viu esse problema? Curta as denúncias abaixo.</small>
+            {% endif %}
+          </div>
+        {% endif %}
       </div>
       <div class="mapa">
         {% if mapa_url %}

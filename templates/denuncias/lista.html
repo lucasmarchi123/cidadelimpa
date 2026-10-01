@@ -33,7 +33,10 @@
         {% for local in pagina %}
           {% with capa=local.visiveis.0 %}
             <article class="local-card" id="local-{{ local.pk }}">
-              <div class="denuncia__foto"><img src="{{ capa.foto.url }}" alt="" loading="lazy"></div>
+              <div class="denuncia__foto local-card__foto">
+                <img src="{{ capa.foto.url }}" alt="" loading="lazy">
+                {% if local.prioridade %}<span class="selo-prioridade"><svg class="icone" aria-hidden="true"><use href="#i-megafone"/></svg>Prioridade da comunidade</span>{% endif %}
+              </div>
               {% include "denuncias/placa.html" with local=local compacta=True %}
 
               <div class="local-card__info">
