@@ -2,6 +2,8 @@ from django.conf import settings
 from django.utils import timezone
 from django.views.generic import TemplateView
 
+from denuncias.regras import META_PRIORIDADE
+
 # Média diária de esgoto sem tratamento lançado na natureza no Brasil,
 # em piscinas olímpicas. Fonte: Instituto Trata Brasil, esgotômetro (base SINISA 2024).
 PISCINAS_POR_DIA = 5442
@@ -21,4 +23,5 @@ class InicioView(TemplateView):
         piscinas = max(1, round(PISCINAS_POR_DIA * fracao_do_dia))
         contexto['piscinas_hoje'] = f'{piscinas:,}'.replace(',', '.')   # 3120 vira 3.120
         contexto['email_contato'] = getattr(settings, 'EMAIL_CONTATO', '')
+        contexto['meta_prioridade'] = META_PRIORIDADE   # usado nas Perguntas frequentes
         return contexto
