@@ -433,6 +433,56 @@ a.metrica:hover { border-color: var(--verde); }
 .faq__mais { margin-top: 1.25rem; color: var(--tinta-suave); }
 @media (prefers-reduced-motion: reduce) { .faq details, .faq summary .icone { transition: none; } }
 
+/* O problema em números */
+.numeros-faixa { background: var(--placa); color: #EAF6EE; }
+/* A onda pinta a parte clara por cima da faixa verde: assim não sobra linha na emenda */
+.numeros-faixa .onda { display: block; color: var(--fundo); }
+.numeros-faixa .onda--baixo { transform: scaleY(-1); }
+.numeros-faixa .conteiner { display: grid; gap: 2rem; padding-block: clamp(1.5rem, 4vw, 2.5rem); }
+.numeros-faixa h2 { color: #fff; }
+.numeros-faixa .secao__topo p { color: #C6E4D1; }
+.numeros-faixa .secao__topo { margin-bottom: 0; }
+
+.contador { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 1.2rem; align-items: center;
+  padding: clamp(1.2rem, 3vw, 1.8rem); border-radius: var(--r-g); background: rgba(255, 255, 255, .07);
+  border: 1px solid rgba(255, 255, 255, .14); }
+.contador__icone { display: grid; place-items: center; width: 3.6rem; height: 3.6rem; border-radius: 14px;
+  background: var(--sol); color: #3A2A00; }
+.contador__icone .icone { width: 1.9rem; height: 1.9rem; }
+.contador p { max-width: none; font-size: clamp(1.1rem, 2.2vw, 1.35rem); line-height: 1.45; }
+.contador strong { font-size: 1.35em; color: var(--sol); }
+.contador small { display: block; margin-top: .35rem; font-size: .88rem; color: #B7D8C3; }
+
+.comparacao { display: grid; gap: 1rem; padding: clamp(1.2rem, 3vw, 1.8rem); border-radius: var(--r-g);
+  background: rgba(255, 255, 255, .07); border: 1px solid rgba(255, 255, 255, .14); }
+.comparacao h3 { color: #fff; font-size: 1.25rem; }
+.comparacao > p { color: #C6E4D1; }
+.barras-rn { display: grid; gap: .9rem; }
+.barras-rn li { display: grid; grid-template-columns: 13rem minmax(0, 1fr) 3.6rem; gap: .9rem; align-items: center; }
+.barras-rn b { text-align: right; font-size: 1.05rem; color: #fff; }
+.barras-rn__trilha { height: .85rem; border-radius: 4px; background: rgba(255, 255, 255, .13); overflow: hidden; }
+.barras-rn__trilha span { display: block; height: 100%; border-radius: 4px; background: #9FD9B4; }
+.barras-rn .destaque-rede .barras-rn__trilha span { background: var(--verde-vivo); }
+.barras-rn .destaque-buraco .barras-rn__trilha span { background: var(--sol); }
+.barras-rn .destaque-rede, .barras-rn .destaque-buraco { font-weight: 700; }
+.barras-rn .secundaria { color: #B7D8C3; font-size: .95rem; }
+
+.numeros-grade { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1rem; }
+.numero { display: grid; gap: .45rem; align-content: start; padding: 1.3rem; border-radius: var(--r-m);
+  background: rgba(255, 255, 255, .07); border: 1px solid rgba(255, 255, 255, .14); }
+.numero__valor { font-size: clamp(2rem, 4vw, 2.6rem); font-weight: 800; line-height: 1; letter-spacing: -0.02em; color: #fff; }
+.numero__texto { font-weight: 650; color: #EAF6EE; }
+.numero__reflexao { font-size: .93rem; color: #B7D8C3; }
+.fontes { max-width: none; font-size: .8rem; color: #9CC7AC; }
+
+@media (max-width: 60rem) { .numeros-grade { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 40rem) {
+  .numeros-grade { grid-template-columns: 1fr; }
+  .contador { grid-template-columns: 1fr; }
+  .barras-rn li { grid-template-columns: minmax(0, 1fr) 3.4rem; }
+  .barras-rn li > span:first-child { grid-column: 1 / -1; }
+}
+
 /* Responsivo */
 @media (max-width: 60rem) {
   .passos { grid-template-columns: repeat(2, minmax(0, 1fr)); }

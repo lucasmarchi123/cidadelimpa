@@ -5,13 +5,14 @@ from django.contrib import admin
 from django.urls import include, path
 from django.views.generic import TemplateView
 from django.contrib.auth.decorators import login_required
+from .views import InicioView
 
 admin.site.login = login_required(admin.site.login)
 
 contato = {'email_contato': getattr(settings, 'EMAIL_CONTATO', '')}
 
 urlpatterns = [
-    path('', TemplateView.as_view(template_name='inicio.html', extra_context=contato), name='inicio'),
+    path('', InicioView.as_view(), name='inicio'),
     path('sobre/', TemplateView.as_view(template_name='sobre.html'), name='sobre'),
     path('termos/', TemplateView.as_view(template_name='institucional/termos.html', extra_context=contato), name='termos'),
     path('privacidade/', TemplateView.as_view(template_name='institucional/privacidade.html', extra_context=contato), name='privacidade'),
