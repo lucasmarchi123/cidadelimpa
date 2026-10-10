@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block titulo %}Prioridade da comunidade — CidadeLimpa{% endblock %}
+
+{% block conteudo %}
+  <main class="conteiner pagina">
+    <div class="pagina__cabecalho">
+      <span class="selo-prioridade"><svg class="icone" aria-hidden="true"><use href="#i-megafone"/></svg>Prioridade da comunidade</span>
+      <h1>Onde a comunidade mais se mobiliza</h1>
+      <p>Endereços em que os moradores mais se uniram para cobrar uma solução. Cada um já foi confirmado pela nossa equipe e reuniu pelo menos {{ meta }} curtidas.</p>
+    </div>
+
+    {% if municipios|length > 1 %}
+      <form class="busca busca--simples" method="get" action="{% url 'prioridades' %}">
+        <div class="campo">
+          <label for="p-municipio">Município</label>
+          <select id="p-municipio" name="municipio">
+            <option value="">Todos os municípios</option>
+            {% for m in municipios %}
+              <option value="{{ m.pk }}"{% if m.pk|stringformat:"s" == municipio_id %} selected{% endif %}>{{ m.nome }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <button class="botao botao--primario" type="submit">Filtrar</button>
+      </form>
+    {% endif %}
+
+    {% if pagina.paginator.count %}
+      <ol class="locais ranking-lista">
+        {% for local in pagina %}
+          {% with capa=local.aceitas_lista.0 %}
+            <li class="local-card ranking-card">
+              <div class="denuncia__foto local-card__foto">
+                <img src="{{ capa.foto.url }}" alt="Foto do problema em {{ local.logradouro }}, {{ local.bairro }}" loading="lazy">
+                <span class="ranking-card__posicao" aria-label="Posição {{ pagina.start_index|add:forloop.counter0 }}">{{ pagina.start_index|add:forloop.counter0 }}º</span>
+              </div>
+              {# Mostra rua, bairro e CEP. O número da casa não aparece nesta página pública. #}
+              {% include "denuncias/placa.html" with local=local compacta=True %}
+              <div class="local-card__linha">
+                <span class="local-card__cidade">{{ local.municipio }}</span>
+                <span class="ranking-card__curtidas"><svg class="icone" aria-hidden="true"><use href="#i-coracao"/></svg>{{ local.curtidas_total }} curtida{{ local.curtidas_total|pluralize }}</span>
+              </div>
+            </li>
+          {% endwith %}
+        {% endfor %}
+      </ol>
+      {% include "painel/paginacao.html" %}
+    {% else %}
+      <div class="vazio">
+        <h2>Ainda não há endereços com o selo</h2>
+        <p>Quando as denúncias de um endereço confirmado pela equipe somarem {{ meta }} curtidas, ele aparece aqui.</p>
+      </div>
+    {% endif %}
+
+    <div class="chamada ranking-chamada">
+      {% if user.is_authenticated %}
+        <p>Quer ajudar outro endereço a chegar aqui? Explore as denúncias da sua cidade e curta as que você conhece.</p>
+        <a class="botao botao--primario" href="{% url 'lista_denuncias' %}">Explorar denúncias</a>
+      {% else %}
+        <p>Conhece um problema assim? Crie sua conta e ajude a mobilizar a sua rua.</p>
+        <a class="botao botao--primario" href="{% url 'cadastro' %}">Criar conta</a>
+      {% endif %}
+    </div>
+  </main>
+{% endblock %}

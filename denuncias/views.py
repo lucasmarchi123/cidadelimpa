@@ -4,12 +4,13 @@ from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
-from django.db.models import Count, Exists, Max, OuterRef, Prefetch, Q
-from django.http import Http404
+from django.db.models import Count, Exists, Max, OuterRef, Prefetch, Q, Subquery
+from django.http import Http404, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.http import url_has_allowed_host_and_scheme
+from django.views.decorators.cache import cache_control
 from django.views.decorators.http import require_POST
 
 from .forms import DenunciaForm
@@ -256,3 +257,54 @@ def excluir(request, pk):
     else:
         messages.error(request, 'Esta denúncia não pode ser excluída.')
     return redirect('minhas_denuncias')
+
+
+def prioridades(request):
+    """Página pública: endereços com o selo Prioridade da comunidade.
+
+    É uma vitrine aberta a qualquer pessoa, por isso só mostra o que a equipe
+    já conferiu: endereços com denúncia ACEITA. Nunca exibe autor, descrição
+    nem o número da casa.
+    """
+    aceitas = Denuncia.objects.filter(excluida=False, status=Denuncia.Status.ACEITA)
+    status_mais_recente = Subquery(
+        denuncias_visiveis().filter(local=OuterRef('pk'))
+        .order_by('-data_registro').values('status')[:1]
+    )
+
+    base = (
+        Local.objects.select_related('municipio')
+        .annotate(curtidas_total=curtidas_do_endereco('pk'), situacao=status_mais_recente)
+        .filter(Exists(aceitas.filter(local=OuterRef('pk'))),
+                curtidas_total__gte=META_PRIORIDADE)
+        .exclude(situacao=Denuncia.Status.RESOLVIDA)   # problema resolvido sai da vitrine
+    )
+
+    municipios = sorted({local.municipio for local in base}, key=lambda m: normalizar(m.nome))
+
+    municipio_id = request.GET.get('municipio', '')
+    lista = base.filter(municipio_id=int(municipio_id)) if municipio_id.isdigit() else base
+
+    # A foto exibida é sempre a de uma denúncia aceita: a que a equipe conferiu
+    lista = lista.prefetch_related(Prefetch(
+        'denuncias', queryset=aceitas.order_by('-data_registro'), to_attr='aceitas_lista',
+    )).order_by('-curtidas_total', 'pk')
+
+    pagina = Paginator(lista, 12).get_page(request.GET.get('pagina'))
+    return render(request, 'denuncias/prioridades.html', {
+        'pagina': pagina, 'municipios': municipios, 'municipio_id': municipio_id,
+        'meta': META_PRIORIDADE,
+    })
+
+
+@login_required
+@cache_control(private=True, max_age=60 * 60 * 24)
+def ruas_do_municipio(request, municipio_id):
+    """Lista de ruas de um município, usada pelas sugestões do formulário.
+
+    São dados públicos do IBGE, sem nenhuma informação pessoal. O navegador
+    guarda a resposta por um dia, para não baixar a lista de novo a cada troca.
+    """
+    municipio = get_object_or_404(Municipio, pk=municipio_id)
+    nomes = sorted(municipio.logradouros.values_list('nome', flat=True), key=normalizar)
+    return JsonResponse({'municipio': municipio.nome, 'ruas': nomes})

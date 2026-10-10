@@ -500,6 +500,38 @@ a.metrica:hover { border-color: var(--verde); }
 .mobilizacao__trilha span { display: block; height: 100%; border-radius: 4px; background: var(--sol); }
 .mobilizacao--atingida { border: 0; background: var(--st-enviada-fundo); justify-items: start; }
 
+/* Página pública Prioridade da comunidade */
+.pagina__cabecalho > .selo-prioridade { justify-self: start; }
+.busca--simples { grid-template-columns: minmax(0, 18rem) auto; justify-content: start; }
+.ranking-lista { list-style: none; margin: 0; padding: 0; }
+.ranking-card:hover { border-color: var(--linha); box-shadow: none; }
+.ranking-card__posicao { position: absolute; top: .6rem; left: .6rem; display: grid; place-items: center;
+  min-width: 2.6rem; height: 2.6rem; padding: 0 .5rem; border-radius: 10px; background: var(--placa); color: #fff;
+  font-size: 1.05rem; font-weight: 800; box-shadow: 0 6px 16px -8px rgba(0, 0, 0, .5); }
+.ranking-card__curtidas { display: inline-flex; align-items: center; gap: .35rem; font-weight: 700; color: var(--tinta); }
+.ranking-card__curtidas .icone { width: 1.05rem; height: 1.05rem; color: var(--st-rejeitada); fill: currentColor; stroke: none; }
+.ranking-chamada { margin-top: 2.5rem; }
+.rodape__links { flex-wrap: wrap; row-gap: .6rem; }
+@media (max-width: 40rem) { .busca--simples { grid-template-columns: 1fr; } }
+
+/* Sugestões de ruas no formulário de denúncia */
+.autocompletar { position: relative; }
+.autocompletar__lista { position: absolute; z-index: 20; top: calc(100% + .3rem); left: 0; right: 0;
+  max-height: 18rem; overflow-y: auto; margin: 0; padding: .35rem; list-style: none;
+  background: var(--papel); border: 1px solid var(--linha-forte); border-radius: var(--r-p);
+  box-shadow: 0 16px 32px -16px rgba(10, 40, 25, .45); }
+.autocompletar__lista li { padding: .6rem .7rem; border-radius: 6px; cursor: pointer; }
+.autocompletar__lista li:hover, .autocompletar__lista li[aria-selected="true"] { background: var(--menta); }
+.autocompletar__lista mark { background: none; color: var(--link); font-weight: 750; }
+.campo__ajuda--alerta { color: var(--st-enviada); font-weight: 600; }
+.aviso-municipio { display: flex; gap: .5rem; align-items: center; padding: .7rem .9rem; border-radius: var(--r-p);
+  background: var(--st-enviada-fundo); font-size: .92rem; font-weight: 600; max-width: none; }
+.aviso-municipio .icone { flex: none; color: var(--st-enviada); }
+.aviso-municipio[hidden], .autocompletar__lista[hidden] { display: none; }
+.nova__form--aguardando .etapa:not(:first-of-type), .nova__form--aguardando .nova__acoes,
+.nova__form--aguardando .etapa:first-of-type .etapa__linha, .nova__form--aguardando .etapa:first-of-type > .campo:last-child {
+  opacity: .45; }
+
 /* Responsivo */
 @media (max-width: 60rem) {
   .passos { grid-template-columns: repeat(2, minmax(0, 1fr)); }

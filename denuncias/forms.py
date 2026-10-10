@@ -4,7 +4,7 @@ from django import forms
 from django.db import transaction
 from django.utils import timezone
 
-from .models import Denuncia, HistoricoStatus, Local, Municipio
+from .models import Denuncia, HistoricoStatus, Local, Logradouro, Municipio
 from .utils import normalizar, normalizar_logradouro, processar_foto
 
 
@@ -96,6 +96,21 @@ class DenunciaForm(forms.Form):
                 'Descreva o problema com um pouco mais de detalhes (pelo menos 20 caracteres).'
             )
         return descricao
+
+    def clean(self):
+        dados = super().clean()
+        municipio = dados.get('municipio')
+        logradouro = dados.get('logradouro')
+        if municipio and logradouro:
+            # Se a rua digitada existir na lista oficial do município,
+            # grava o nome oficial: "r das flores" vira "Rua das Flores".
+            # Se não existir, aceita como foi digitado (ruas novas não estão no Censo).
+            oficial = (Logradouro.objects
+                       .filter(municipio=municipio, nome_busca=normalizar_logradouro(logradouro))
+                       .values_list('nome', flat=True).first())
+            if oficial:
+                dados['logradouro'] = oficial
+        return dados
 
     def clean_data_ocorrencia(self):
         data = self.cleaned_data['data_ocorrencia']

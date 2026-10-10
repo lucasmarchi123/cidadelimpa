@@ -19,6 +19,31 @@ class Municipio(models.Model):
         return f'{self.nome}/{self.uf}'
 
 
+class Logradouro(models.Model):
+    """Ruas oficiais de cada município, importadas do CNEFE (IBGE, Censo 2022).
+
+    Servem para sugerir ruas no formulário de denúncia e corrigir a grafia
+    do que o usuário digita.
+    """
+    municipio = models.ForeignKey(
+        Municipio, on_delete=models.CASCADE, related_name='logradouros'
+    )
+    nome = models.CharField(max_length=150)
+    # O nome sem acentos, em minúsculas e sem abreviações: usado para comparar
+    nome_busca = models.CharField(max_length=150, db_index=True)
+
+    class Meta:
+        verbose_name = 'logradouro'
+        verbose_name_plural = 'logradouros'
+        ordering = ['nome']
+        constraints = [
+            models.UniqueConstraint(fields=['municipio', 'nome_busca'], name='uk_logradouro_municipio'),
+        ]
+
+    def __str__(self):
+        return f'{self.nome} ({self.municipio.nome})'
+
+
 class Local(models.Model):
     municipio = models.ForeignKey(
         Municipio, on_delete=models.PROTECT, related_name='locais'

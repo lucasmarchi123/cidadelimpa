@@ -21,6 +21,7 @@
               <span>@{{ user.username }}</span>
             </div>
             <a class="so-movel" href="{{ url_lista }}">Denúncias</a>
+            <a class="so-movel" href="{% url 'prioridades' %}">Prioridade da comunidade</a>
             <a class="so-movel" href="{% url 'inicio' %}#como-funciona">Como funciona</a>
             <a class="so-movel" href="{% url 'sobre' %}">Sobre o projeto</a>
             <a class="so-movel" href="{{ url_nova }}">Denunciar</a>

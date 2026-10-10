@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block titulo %}Nova denúncia — CidadeLimpa{% endblock %}
 
@@ -21,7 +22,8 @@
       </aside>
 
       {# enctype é obrigatório para o formulário conseguir enviar arquivos #}
-      <form class="nova__form" method="post" action="{% url 'nova_denuncia' %}" enctype="multipart/form-data" novalidate>
+      <form class="nova__form" method="post" action="{% url 'nova_denuncia' %}" enctype="multipart/form-data" novalidate
+            data-form-denuncia data-url-ruas="{% url 'ruas_municipio' 0 %}">
         {% csrf_token %}
 
         {% if form.errors %}
@@ -34,8 +36,21 @@
         <fieldset class="etapa">
           <legend><span class="etapa__numero">1</span>Onde fica o problema</legend>
           {% include "includes/campo.html" with campo=form.municipio %}
+          {# Só aparece quando o JavaScript está ativo e nenhum município foi escolhido #}
+          <p class="aviso-municipio" data-aviso-municipio hidden>
+            <svg class="icone" aria-hidden="true"><use href="#i-pino"/></svg>
+            Escolha o município para liberar o restante do formulário.
+          </p>
           <div class="etapa__linha">
-            {% include "includes/campo.html" with campo=form.logradouro %}
+            <div class="campo{% if form.logradouro.errors %} campo--erro{% endif %}">
+              <label for="{{ form.logradouro.id_for_label }}">{{ form.logradouro.label }}</label>
+              <div class="autocompletar">
+                {{ form.logradouro }}
+                <ul class="autocompletar__lista" id="lista-ruas" role="listbox" aria-label="Ruas sugeridas" hidden></ul>
+              </div>
+              <span class="campo__ajuda" id="ajuda-ruas" aria-live="polite"></span>
+              {% for erro in form.logradouro.errors %}<span class="campo__erro">{{ erro }}</span>{% endfor %}
+            </div>
             {% include "includes/campo.html" with campo=form.numero %}
           </div>
           <div class="etapa__linha">
@@ -71,4 +86,8 @@
       </form>
     </div>
   </main>
+{% endblock %}
+
+{% block scripts %}
+  <script src="{% static 'js/ruas.js' %}?v=2026100201" defer></script>
 {% endblock %}

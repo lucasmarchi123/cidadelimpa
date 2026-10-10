@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Curtida, Denuncia, HistoricoStatus, Local, LogAdmin, Municipio
+from .models import Curtida, Denuncia, HistoricoStatus, Local, Logradouro, LogAdmin, Municipio
 
 
 @admin.register(Municipio)
@@ -49,3 +49,10 @@ class HistoricoStatusAdmin(admin.ModelAdmin):
 class LogAdminAdmin(admin.ModelAdmin):
     list_display = ('data_hora', 'acao', 'usuario', 'entidade', 'id_entidade', 'endereco_ip')
     list_filter = ('acao',)
+
+
+@admin.register(Logradouro)
+class LogradouroAdmin(admin.ModelAdmin):
+    list_display = ('nome', 'municipio')
+    list_filter = ('municipio',)
+    search_fields = ('nome', 'nome_busca')
