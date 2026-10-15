@@ -1,0 +1,60 @@
+{% extends "painel/base_painel.html" %}
+
+{% block titulo %}Municípios — Painel CidadeLimpa{% endblock %}
+
+{% block painel %}
+  <div class="pagina__cabecalho cabecalho-acao">
+    <div>
+      <h1>Municípios</h1>
+      <p>{{ total }} município{{ total|pluralize }} cadastrado{{ total|pluralize }}. Eles aparecem na lista do formulário de denúncia.</p>
+    </div>
+    <a class="botao botao--primario" href="{% url 'painel_municipio_criar' %}"><svg class="icone" aria-hidden="true"><use href="#i-mais"/></svg>Cadastrar município</a>
+  </div>
+
+  <form class="busca busca--simples" role="search" method="get" action="{% url 'painel_municipios' %}">
+    <div class="campo">
+      <label for="m-busca">Buscar por nome ou código do IBGE</label>
+      <input id="m-busca" name="busca" type="search" value="{{ busca }}" maxlength="100" placeholder="Ex.: Canguaretama">
+    </div>
+    <button class="botao botao--primario" type="submit"><svg class="icone" aria-hidden="true"><use href="#i-lupa"/></svg>Buscar</button>
+  </form>
+
+  {% if pagina.paginator.count %}
+    <div class="tabela-rolagem">
+      <table class="tabela">
+        <thead><tr><th>Município</th><th>UF</th><th>Código do IBGE</th><th>Endereços</th><th>Ruas</th><th></th></tr></thead>
+        <tbody>
+          {% for m in pagina %}
+            <tr>
+              <td><strong>{{ m.nome }}</strong></td>
+              <td>{{ m.uf }}</td>
+              <td>{{ m.codigo_ibge|default:"—" }}</td>
+              <td>{{ m.n_locais }}</td>
+              <td>{{ m.n_ruas }}</td>
+              <td class="tabela__acao">
+                <a class="botao botao--secundario botao--pequeno" href="{% url 'painel_municipio_editar' m.pk %}">Editar</a>
+                {% if m.n_locais or m.n_ruas %}
+                  <span class="campo__ajuda" title="Tem endereços ou ruas cadastrados">Em uso</span>
+                {% else %}
+                  <details class="confirmar">
+                    <summary class="botao botao--texto-perigo botao--pequeno">Excluir</summary>
+                    <div class="confirmar__caixa">
+                      <p>Excluir {{ m.nome }}? Ele deixa de aparecer no formulário de denúncia.</p>
+                      <form method="post" action="{% url 'painel_municipio_excluir' m.pk %}">
+                        {% csrf_token %}
+                        <button class="botao botao--perigo botao--pequeno" type="submit">Sim, excluir</button>
+                      </form>
+                    </div>
+                  </details>
+                {% endif %}
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% include "painel/paginacao.html" %}
+  {% else %}
+    <div class="vazio"><h2>Nenhum município encontrado</h2><p>Tente outra busca.</p></div>
+  {% endif %}
+{% endblock %}

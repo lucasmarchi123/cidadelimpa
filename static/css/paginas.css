@@ -532,6 +532,13 @@ a.metrica:hover { border-color: var(--verde); }
 .nova__form--aguardando .etapa:first-of-type .etapa__linha, .nova__form--aguardando .etapa:first-of-type > .campo:last-child {
   opacity: .45; }
 
+/* Painel: municípios */
+.cabecalho-acao { grid-template-columns: minmax(0, 1fr) auto; align-items: end; gap: 1rem; }
+.cabecalho-acao > div { display: grid; gap: .6rem; }
+.form-painel { display: grid; gap: 1.3rem; max-width: 34rem; }
+.tabela__acao .campo__ajuda { margin-left: .5rem; }
+@media (max-width: 40rem) { .cabecalho-acao { grid-template-columns: 1fr; } }
+
 /* Responsivo */
 @media (max-width: 60rem) {
   .passos { grid-template-columns: repeat(2, minmax(0, 1fr)); }

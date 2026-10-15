@@ -1,0 +1,28 @@
+{% extends "painel/base_painel.html" %}
+
+{% block titulo %}{{ titulo }} — Painel CidadeLimpa{% endblock %}
+
+{% block painel %}
+  <a class="voltar" href="{% url 'painel_municipios' %}"><svg class="icone" aria-hidden="true"><use href="#i-voltar"/></svg>Voltar para municípios</a>
+
+  <div class="form-painel">
+    <h1>{{ titulo }}</h1>
+
+    {% if municipio %}
+      <p class="concluida">Este município tem {{ municipio.n_locais }} endereço{{ municipio.n_locais|pluralize }} de denúncia e {{ municipio.n_ruas }} rua{{ municipio.n_ruas|pluralize }} cadastrada{{ municipio.n_ruas|pluralize }}. Alterar o nome muda como ele aparece em todo o site.</p>
+    {% endif %}
+
+    <form class="acesso__form" method="post" novalidate>
+      {% csrf_token %}
+      {% include "includes/campo.html" with campo=form.nome %}
+      <div class="acesso__dupla">
+        {% include "includes/campo.html" with campo=form.uf %}
+        {% include "includes/campo.html" with campo=form.codigo_ibge %}
+      </div>
+      <div class="nova__acoes">
+        <button class="botao botao--primario" type="submit">{% if municipio %}Salvar alterações{% else %}Cadastrar{% endif %}</button>
+        <a class="botao botao--secundario" href="{% url 'painel_municipios' %}">Cancelar</a>
+      </div>
+    </form>
+  </div>
+{% endblock %}
