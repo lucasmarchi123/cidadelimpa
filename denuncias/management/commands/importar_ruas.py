@@ -24,6 +24,7 @@ from denuncias.models import Logradouro, Municipio
 from denuncias.utils import normalizar, normalizar_logradouro
 
 ARQUIVO_COMPACTO = Path(__file__).resolve().parents[2] / 'dados' / 'ruas_rn.csv'
+ARQUIVO_MUNICIPIOS = Path(__file__).resolve().parents[2] / 'dados' / 'municipios_rn.csv'
 URL_MUNICIPIOS_RN = 'https://servicodados.ibge.gov.br/api/v1/localidades/estados/24/municipios'
 
 COLUNAS = ['COD_MUNICIPIO', 'NOM_TIPO_SEGLOGR', 'NOM_TITULO_SEGLOGR', 'NOM_SEGLOGR']
@@ -154,19 +155,22 @@ class Command(BaseCommand):
         sem_codigo = Municipio.objects.filter(Q(codigo_ibge__isnull=True) | Q(codigo_ibge=''))
         if not sem_codigo.exists():
             return
-        self.stdout.write('Buscando os códigos dos municípios no IBGE...')
-        try:
-            pedido = urllib.request.Request(URL_MUNICIPIOS_RN, headers={'Accept-Encoding': 'identity'})
-            with urllib.request.urlopen(pedido, timeout=30) as resposta:
-                conteudo = resposta.read()
-            # O servidor do IBGE às vezes responde compactado (gzip), mesmo sem pedirmos.
-            # Arquivos gzip sempre começam com os bytes 1F 8B.
-            if conteudo[:2] == b'\x1f\x8b':
-                conteudo = gzip.decompress(conteudo)
-            dados = json.loads(conteudo.decode('utf-8'))
-        except Exception as erro:
-            raise CommandError('Não foi possível consultar o IBGE para obter os códigos dos '
-                               f'municípios. Confira a conexão com a internet. ({erro})')
+        if ARQUIVO_MUNICIPIOS.exists():
+            # Os códigos já foram buscados uma vez e estão no projeto: não precisa de internet
+            self.stdout.write(f'Usando os códigos de {ARQUIVO_MUNICIPIOS.name}, já pronto.')
+            with open(ARQUIVO_MUNICIPIOS, encoding='utf-8', newline='') as entrada:
+                leitor = csv.reader(entrada, delimiter=';')
+                next(leitor)
+                dados = [{'id': codigo, 'nome': nome} for codigo, nome in leitor]
+        else:
+            dados = self.buscar_no_ibge()
+            ARQUIVO_MUNICIPIOS.parent.mkdir(exist_ok=True)
+            with open(ARQUIVO_MUNICIPIOS, 'w', encoding='utf-8', newline='') as saida:
+                escritor = csv.writer(saida, delimiter=';')
+                escritor.writerow(['codigo_ibge', 'nome'])
+                escritor.writerows(sorted((str(m['id']), m['nome']) for m in dados))
+            self.stdout.write(f'Códigos salvos em {ARQUIVO_MUNICIPIOS}. Envie esse arquivo ao '
+                              'GitHub: os outros computadores não vão precisar consultar o IBGE.')
 
         por_nome = {chave_municipio(m['nome']): str(m['id']) for m in dados}
         nao_encontrados = []
@@ -182,6 +186,32 @@ class Command(BaseCommand):
             self.stdout.write(self.style.WARNING(
                 'Municípios sem código (as ruas deles não serão importadas): '
                 + ', '.join(nao_encontrados)))
+
+    def buscar_no_ibge(self):
+        self.stdout.write('Buscando os códigos dos municípios no IBGE...')
+        # Redes de instituições costumam usar um certificado próprio, que o Windows
+        # conhece mas o Python não. A biblioteca truststore faz o Python usar os
+        # certificados do Windows.
+        try:
+            import truststore
+            truststore.inject_into_ssl()
+        except ImportError:
+            pass
+        try:
+            pedido = urllib.request.Request(URL_MUNICIPIOS_RN, headers={'Accept-Encoding': 'identity'})
+            with urllib.request.urlopen(pedido, timeout=30) as resposta:
+                conteudo = resposta.read()
+            # O servidor do IBGE às vezes responde compactado (gzip), mesmo sem pedirmos.
+            # Arquivos gzip sempre começam com os bytes 1F 8B.
+            if conteudo[:2] == b'\x1f\x8b':
+                conteudo = gzip.decompress(conteudo)
+            return json.loads(conteudo.decode('utf-8'))
+        except Exception as erro:
+            dica = ''
+            if 'CERTIFICATE_VERIFY_FAILED' in str(erro):
+                dica = (' A rede usa um certificado próprio. Rode "pip install truststore" '
+                        'e tente de novo.')
+            raise CommandError(f'Não foi possível consultar o IBGE.{dica} ({erro})')
 
     # ------------------------------------------------------------------ gravação
 
