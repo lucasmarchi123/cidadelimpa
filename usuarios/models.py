@@ -1,5 +1,25 @@
+from django.contrib.auth.hashers import UNUSABLE_PASSWORD_PREFIX
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from django.db.models import Q
+
+# Domínio usado no e-mail de contas excluídas. O final ".invalid" é reservado
+# pela internet para endereços que não existem, então nenhum e-mail chega lá.
+DOMINIO_CONTA_EXCLUIDA = 'conta-excluida.invalid'
+
+
+def filtro_conta_excluida():
+    """Filtro de banco que encontra as contas excluídas pelo próprio titular.
+
+    Uma conta excluída tem as três marcas ao mesmo tempo: está inativa, não tem
+    senha utilizável e usa o e-mail reservado. Uma pessoa comum não consegue
+    reunir as três, porque toda conta criada pelo cadastro tem senha.
+    """
+    return Q(
+        is_active=False,
+        password__startswith=UNUSABLE_PASSWORD_PREFIX,
+        email__endswith='@' + DOMINIO_CONTA_EXCLUIDA,
+    )
 
 
 class Usuario(AbstractUser):
@@ -13,6 +33,15 @@ class Usuario(AbstractUser):
 
     def __str__(self):
         return self.username
+
+    @property
+    def conta_excluida(self):
+        """Mesma regra de filtro_conta_excluida(), para um usuário já carregado."""
+        return (
+            not self.is_active
+            and not self.has_usable_password()
+            and self.email.endswith('@' + DOMINIO_CONTA_EXCLUIDA)
+        )
 
     @property
     def primeiro_nome(self):

@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block titulo %}Excluir minha conta — CidadeLimpa{% endblock %}
+
+{% block conteudo %}
+  <main class="conteiner acesso acesso--simples">
+    <div class="acesso__painel">
+      <span class="selo selo--perigo" aria-hidden="true"><svg class="icone"><use href="#i-alerta"/></svg></span>
+      <h1>Excluir minha conta</h1>
+      <p>Antes de confirmar, veja o que acontece com a sua conta e com as suas denúncias.</p>
+
+      <ul class="efeitos">
+        <li>Seu nome, seu e-mail e seu nome de usuário são apagados. Você não consegue mais entrar com esta conta.</li>
+        {% if pendentes == 1 %}
+          <li>Sua denúncia que aguarda análise será excluída.</li>
+        {% elif pendentes %}
+          <li>Suas {{ pendentes }} denúncias que aguardam análise serão excluídas.</li>
+        {% endif %}
+        {% if analisadas == 1 %}
+          <li>Sua denúncia já analisada continua no histórico do endereço, assinada como “Anônimo”.</li>
+        {% elif analisadas %}
+          <li>Suas {{ analisadas }} denúncias já analisadas continuam no histórico dos endereços, assinadas como “Anônimo”.</li>
+        {% endif %}
+        <li>Suas curtidas continuam contando para a Prioridade da comunidade, também sem identificação.</li>
+        <li><strong>A exclusão é definitiva e não pode ser desfeita.</strong></li>
+      </ul>
+
+      <form class="acesso__form" method="post" action="{% url 'excluir_conta' %}" novalidate>
+        {% csrf_token %}
+
+        {% include "includes/campo.html" with campo=form.senha %}
+
+        <div class="caixa-campo">
+          <label class="caixa">
+            {{ form.confirmacao }}
+            <span>Entendo que a exclusão é definitiva e não pode ser desfeita.</span>
+          </label>
+          {% for erro in form.confirmacao.errors %}<span class="campo__erro">{{ erro }}</span>{% endfor %}
+        </div>
+
+        <button class="botao botao--perigo botao--largo" type="submit">Excluir minha conta</button>
+      </form>
+
+      <p class="acesso__rodape"><a href="{% url 'meus_dados' %}">Cancelar e voltar aos meus dados</a></p>
+    </div>
+  </main>
+{% endblock %}

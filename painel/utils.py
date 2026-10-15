@@ -17,6 +17,8 @@ def registrar_log(request, acao, entidade='', id_entidade=None, descricao='', us
 
 def pode_alterar_usuario(ator, alvo):
     """Regras para bloquear ou desbloquear uma conta."""
+    if alvo.conta_excluida:
+        return False            # conta excluída pelo titular não volta a ser ativada
     if alvo.pk == ator.pk:
         return False            # ninguém bloqueia a própria conta
     if alvo.is_superuser:

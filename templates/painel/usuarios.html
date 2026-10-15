@@ -47,9 +47,11 @@
               <td>{% if u.is_staff %}<span class="papel papel--admin">Administrador</span>{% else %}<span class="papel">Cidadão</span>{% endif %}</td>
               <td>{{ u.date_joined|date:"d/m/Y" }}</td>
               <td>{{ u.n_denuncias }}{% if u.n_rejeitadas %}<small>{{ u.n_rejeitadas }} rejeitada{{ u.n_rejeitadas|pluralize }}</small>{% endif %}</td>
-              <td>{% if u.is_active %}<span class="situacao">Ativo</span>{% else %}<span class="situacao situacao--bloqueado">Bloqueado</span>{% endif %}</td>
+              <td>{% if u.is_active %}<span class="situacao">Ativo</span>{% elif u.conta_excluida %}<span class="situacao situacao--excluida">Excluída</span>{% else %}<span class="situacao situacao--bloqueado">Bloqueado</span>{% endif %}</td>
               <td class="tabela__acao">
-                {% if u.pk == user.pk %}
+                {% if u.conta_excluida %}
+                  <span class="campo__ajuda">Excluída pelo titular</span>
+                {% elif u.pk == user.pk %}
                   <span class="campo__ajuda">Sua conta</span>
                 {% elif not u.pode_alterar %}
                   <span class="campo__ajuda">Só o superusuário altera administradores</span>

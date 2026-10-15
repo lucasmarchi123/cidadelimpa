@@ -539,6 +539,21 @@ a.metrica:hover { border-color: var(--verde); }
 .tabela__acao .campo__ajuda { margin-left: .5rem; }
 @media (max-width: 40rem) { .cabecalho-acao { grid-template-columns: 1fr; } }
 
+/* Meus dados e exclusão da conta */
+.conta-grade { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, .8fr); gap: 1.5rem; align-items: start; }
+.conta-grade .acesso__form { max-width: 30rem; }
+.conta-grade .acesso__form .botao { justify-self: start; }
+.conta-lateral { display: grid; gap: 1.5rem; min-width: 0; }
+.conta-lateral .botao { justify-self: start; }
+.bloco-painel--perigo { border-color: var(--st-rejeitada); }
+.situacao--excluida { color: var(--tinta-suave); }
+.situacao--excluida::before { background: var(--linha-forte); }
+.selo--perigo { background: var(--st-rejeitada-fundo); color: var(--st-rejeitada); }
+.efeitos { display: grid; gap: .6rem; padding: 1rem 1.1rem 1rem 2.2rem; border-radius: var(--r-p);
+  background: var(--st-rejeitada-fundo); font-size: .95rem; list-style: disc; }
+.efeitos li::marker { color: var(--st-rejeitada); }
+@media (max-width: 48rem) { .conta-grade { grid-template-columns: 1fr; } }
+
 /* Responsivo */
 @media (max-width: 60rem) {
   .passos { grid-template-columns: repeat(2, minmax(0, 1fr)); }

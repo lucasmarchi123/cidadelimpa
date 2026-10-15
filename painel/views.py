@@ -14,6 +14,7 @@ from django.views.decorators.http import require_POST
 from denuncias.models import Denuncia, HistoricoStatus, Local, LogAdmin, Municipio
 from denuncias.regras import META_PRIORIDADE, curtidas_do_endereco
 from denuncias.utils import normalizar, normalizar_logradouro
+from usuarios.models import filtro_conta_excluida
 
 from .decorators import equipe_requerida
 from .utils import formatar_duracao, pode_alterar_usuario, registrar_log
@@ -303,7 +304,8 @@ def excluir(request, pk):
 
 FILTROS_USUARIOS = [
     ('todos', 'Todos'), ('ativos', 'Ativos'),
-    ('bloqueados', 'Bloqueados'), ('admins', 'Administradores'),
+    ('bloqueados', 'Bloqueados'), ('excluidas', 'Contas excluídas'),
+    ('admins', 'Administradores'),
 ]
 ORDENS = {
     'recentes': ('-date_joined', 'Cadastro mais recente'),
@@ -318,7 +320,8 @@ def usuarios(request):
     grupos = {
         'todos': base,
         'ativos': base.filter(is_active=True),
-        'bloqueados': base.filter(is_active=False),
+        'bloqueados': base.filter(is_active=False).exclude(filtro_conta_excluida()),
+        'excluidas': base.filter(filtro_conta_excluida()),
         'admins': base.filter(is_staff=True),
     }
     filtro = request.GET.get('filtro', 'todos')

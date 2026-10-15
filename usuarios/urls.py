@@ -8,4 +8,6 @@ urlpatterns = [
     # Esta rota vem antes das rotas prontas do Django, então substitui o login padrão
     path('login/', auth_views.LoginView.as_view(authentication_form=LoginForm), name='login'),
     path('cadastro/', views.cadastro, name='cadastro'),
+    path('meus-dados/', views.meus_dados, name='meus_dados'),
+    path('excluir-conta/', views.excluir_conta, name='excluir_conta'),
 ]

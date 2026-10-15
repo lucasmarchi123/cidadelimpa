@@ -26,6 +26,7 @@
             <a class="so-movel" href="{% url 'sobre' %}">Sobre o projeto</a>
             <a class="so-movel" href="{{ url_nova }}">Denunciar</a>
             <a href="{% url 'minhas_denuncias' %}">Minhas denúncias</a>
+            <a href="{% url 'meus_dados' %}">Meus dados</a>
             {% if user.is_staff %}<a href="{% url 'painel' %}">Painel administrativo</a>{% endif %}
             <a href="{% url 'password_change' %}">Trocar senha</a>
             <hr>

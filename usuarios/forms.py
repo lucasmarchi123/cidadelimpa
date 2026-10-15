@@ -7,6 +7,7 @@ from .models import Usuario
 from .seguranca import esta_bloqueado, limpar_falhas, registrar_falha
 
 MENSAGEM_LOGIN_INVALIDO = 'Nome de usuário ou senha incorretos. Verifique os dados e tente novamente.'
+MENSAGEM_BLOQUEIO = 'Muitas tentativas sem sucesso. Por segurança, aguarde 15 minutos e tente novamente.'
 
 
 class LoginForm(AuthenticationForm):
@@ -14,7 +15,7 @@ class LoginForm(AuthenticationForm):
         'invalid_login': MENSAGEM_LOGIN_INVALIDO,
         # Conta bloqueada recebe a mesma mensagem: não revelamos que a conta existe
         'inactive': MENSAGEM_LOGIN_INVALIDO,
-        'bloqueado': 'Muitas tentativas sem sucesso. Por segurança, aguarde 15 minutos e tente novamente.',
+        'bloqueado': MENSAGEM_BLOQUEIO,
     }
 
     def clean(self):
@@ -82,3 +83,96 @@ class CadastroForm(UserCreationForm):
         if commit:
             usuario.save()
         return usuario
+
+
+def conferir_senha(request, usuario, senha):
+    """Confere a senha de quem já está logado, antes de uma ação sensível.
+
+    Usa o mesmo limite de tentativas do login: depois de 5 erros, a conferência
+    fica bloqueada por 15 minutos. Assim, quem encontrar uma sessão aberta
+    não consegue ficar testando senhas por aqui.
+    """
+    ip = request.META.get('REMOTE_ADDR', '')
+    if esta_bloqueado(usuario.username, ip):
+        raise ValidationError(MENSAGEM_BLOQUEIO, code='bloqueado')
+    if not senha or not usuario.check_password(senha):
+        registrar_falha(usuario.username, ip)
+        raise ValidationError('Senha incorreta.', code='senha_incorreta')
+    limpar_falhas(usuario.username, ip)
+
+
+class MeusDadosForm(forms.ModelForm):
+    senha_atual = forms.CharField(
+        label='Senha atual',
+        required=False,
+        strip=False,
+        widget=forms.PasswordInput(attrs={'autocomplete': 'current-password'}),
+        help_text='Necessária somente se você alterar o e-mail.',
+    )
+
+    class Meta:
+        model = Usuario
+        # Lista fechada: só nome e e-mail podem ser alterados por aqui.
+        # Campos como username, is_staff e is_active ficam de fora.
+        fields = ('nome_completo', 'email')
+        labels = {'nome_completo': 'Nome completo', 'email': 'E-mail'}
+        help_texts = {
+            'email': 'É para este endereço que enviamos o link de recuperação de senha.',
+        }
+        widgets = {
+            'nome_completo': forms.TextInput(attrs={'autocomplete': 'name'}),
+            'email': forms.EmailInput(attrs={'autocomplete': 'email'}),
+        }
+
+    def __init__(self, *args, request=None, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.request = request
+        # Guardado antes da validação, que altera o objeto do formulário.
+        self.email_original = self.instance.email
+
+    def clean_nome_completo(self):
+        nome = ' '.join(self.cleaned_data['nome_completo'].split())
+        if len(nome) < 3:
+            raise ValidationError('Informe seu nome completo.')
+        return nome
+
+    def clean_email(self):
+        email = self.cleaned_data['email'].strip().lower()
+        repetido = Usuario.objects.filter(email__iexact=email).exclude(pk=self.instance.pk)
+        if repetido.exists():
+            raise ValidationError('Este e-mail já está cadastrado.')
+        return email
+
+    def clean(self):
+        dados = super().clean()
+        email = dados.get('email')
+        # Trocar o e-mail muda para onde vai o link de recuperação de senha.
+        # Sem a senha, quem pegasse uma sessão aberta poderia tomar a conta.
+        if email and email != self.email_original.lower():
+            try:
+                conferir_senha(self.request, self.instance, dados.get('senha_atual'))
+            except ValidationError as erro:
+                self.add_error('senha_atual', erro)
+        return dados
+
+
+class ExcluirContaForm(forms.Form):
+    senha = forms.CharField(
+        label='Sua senha',
+        strip=False,
+        widget=forms.PasswordInput(attrs={'autocomplete': 'current-password'}),
+    )
+    confirmacao = forms.BooleanField(
+        required=True,
+        error_messages={'required': 'Marque a confirmação para continuar.'},
+    )
+
+    def __init__(self, *args, request, usuario, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.request = request
+        self.usuario = usuario
+
+    def clean_senha(self):
+        senha = self.cleaned_data['senha']
+        conferir_senha(self.request, self.usuario, senha)
+        return senha

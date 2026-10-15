@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+
+{% block titulo %}Meus dados — CidadeLimpa{% endblock %}
+
+{% block conteudo %}
+  <main class="conteiner pagina">
+    <div class="pagina__cabecalho">
+      <h1>Meus dados</h1>
+      <p>Confira as informações da sua conta e mantenha seu nome e seu e-mail atualizados.</p>
+    </div>
+
+    <div class="conta-grade">
+      <section class="bloco-painel" aria-labelledby="titulo-dados">
+        <h2 id="titulo-dados">Dados da conta</h2>
+
+        {% if form.non_field_errors %}
+          <div class="aviso-erro" role="alert">
+            <svg class="icone" aria-hidden="true"><use href="#i-alerta"/></svg>
+            <span>{% for erro in form.non_field_errors %}{{ erro }} {% endfor %}</span>
+          </div>
+        {% endif %}
+
+        <form class="acesso__form" method="post" action="{% url 'meus_dados' %}" novalidate>
+          {% csrf_token %}
+
+          <dl class="dados">
+            <div>
+              <dt>Nome de usuário</dt>
+              <dd>@{{ user.username }}</dd>
+              <dd class="campo__ajuda">É com ele que você entra no sistema. Ele não pode ser alterado.</dd>
+            </div>
+          </dl>
+
+          {% include "includes/campo.html" with campo=form.nome_completo %}
+          {% include "includes/campo.html" with campo=form.email %}
+          {% include "includes/campo.html" with campo=form.senha_atual %}
+
+          <button class="botao botao--primario" type="submit">Salvar alterações</button>
+        </form>
+      </section>
+
+      <div class="conta-lateral">
+        <section class="bloco-painel" aria-labelledby="titulo-resumo">
+          <h2 id="titulo-resumo">Sua participação</h2>
+          <dl class="dados">
+            <div><dt>Conta criada em</dt><dd>{{ user.date_joined|date:"d/m/Y" }}</dd></div>
+            {% if user.data_aceite_termos %}
+              <div><dt>Termos e política aceitos em</dt><dd>{{ user.data_aceite_termos|date:"d/m/Y \à\s H:i" }}</dd></div>
+            {% endif %}
+            <div><dt>Denúncias registradas</dt><dd>{{ total_denuncias }}{% if total_denuncias %} · <a href="{% url 'minhas_denuncias' %}">ver minhas denúncias</a>{% endif %}</dd></div>
+            <div><dt>Denúncias curtidas</dt><dd>{{ total_curtidas }}</dd></div>
+          </dl>
+        </section>
+
+        <section class="bloco-painel" aria-labelledby="titulo-senha">
+          <h2 id="titulo-senha">Senha</h2>
+          <p class="campo__ajuda">Troque sua senha sempre que suspeitar que outra pessoa a conhece.</p>
+          <a class="botao botao--secundario" href="{% url 'password_change' %}"><svg class="icone" aria-hidden="true"><use href="#i-cadeado"/></svg>Trocar senha</a>
+        </section>
+
+        <section class="bloco-painel bloco-painel--perigo" aria-labelledby="titulo-excluir">
+          <h2 id="titulo-excluir">Excluir conta</h2>
+          {% if user.is_staff %}
+            <p class="campo__ajuda">Contas da equipe administrativa não podem ser excluídas por aqui. Para encerrar o seu acesso, fale com o superusuário.</p>
+          {% else %}
+            <p class="campo__ajuda">Seus dados pessoais são apagados e você não consegue mais entrar. As denúncias já analisadas continuam no histórico dos endereços, sem identificação.</p>
+            <a class="botao botao--texto-perigo" href="{% url 'excluir_conta' %}">Excluir minha conta</a>
+          {% endif %}
+        </section>
+      </div>
+    </div>
+  </main>
+{% endblock %}
